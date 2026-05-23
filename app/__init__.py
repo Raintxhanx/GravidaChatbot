@@ -105,7 +105,7 @@ def create_app() -> Flask:
     secret_api_key = os.getenv('API_KEY', 'default_api_key_ganti_di_production')
 
     rag_service   = RAGApplicationService(vector_repo, embedder, langchain, doc_parser)
-    user_use_case = UserUseCase(repo=user_repo, secret_key=secret_key, secret_api_key=secret_api_key)
+    user_use_case = UserUseCase(repo=user_repo, secret_key=secret_key)
 
     # ──────────────────────────────────────────
     # 7. Registrasi Blueprint (Routing Layer)
@@ -117,7 +117,7 @@ def create_app() -> Flask:
         url_prefix=API_PREFIX
     )
     app.register_blueprint(
-        create_document_blueprint(rag_service, secret_key),
+        create_document_blueprint(rag_service, secret_key, secret_api_key),
         url_prefix=API_PREFIX
     )
 
