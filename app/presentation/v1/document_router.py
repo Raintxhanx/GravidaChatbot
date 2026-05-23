@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from functools import wraps
 import jwt
 
-def create_document_blueprint(rag_service, secret_key: str) -> Blueprint:
+def create_document_blueprint(rag_service, secret_key: str, secret_api: str) -> Blueprint:
     """
     Factory function — menerima RAGApplicationService yang sudah di-inject dari luar.
     """
@@ -19,6 +19,14 @@ def create_document_blueprint(rag_service, secret_key: str) -> Blueprint:
 
             if auth_header.startswith('Bearer '):
                 token = auth_header.split(' ')[1]
+
+            if auth_header.startswith('ApiKey '):
+                api_key = auth_header.split(' ')[1]
+                if api_key == secret_api:
+                    request.current_user = {'user_id': 'api_client', 'role': 'admin'}
+                    return f(*args, **kwargs)
+                else:
+                    return jsonify({'success': False, 'message': 'API key tidak valid'}), 401
 
             if not token:
                 return jsonify({'success': False, 'message': 'Token tidak ditemukan'}), 401

@@ -102,9 +102,10 @@ def create_app() -> Flask:
     # ──────────────────────────────────────────
     user_repo     = SQLUserRepository()
     secret_key    = app.config['SECRET_KEY']
+    secret_api_key = os.getenv('API_KEY', 'default_api_key_ganti_di_production')
 
     rag_service   = RAGApplicationService(vector_repo, embedder, langchain, doc_parser)
-    user_use_case = UserUseCase(repo=user_repo, secret_key=secret_key)
+    user_use_case = UserUseCase(repo=user_repo, secret_key=secret_key, secret_api_key=secret_api_key)
 
     # ──────────────────────────────────────────
     # 7. Registrasi Blueprint (Routing Layer)
