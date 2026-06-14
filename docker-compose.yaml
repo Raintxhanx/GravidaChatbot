@@ -5,11 +5,11 @@ services:
     build: .
     container_name: pregnancy_app
     environment:
-      DATABASE_URL: postgresql://ajiandrain:RaihanSecret1309@db:5432/pregnancy_guide
+      DATABASE_URL: postgresql://ajiandrain:RaihanSecret1309@db:5432/pregnancy_guide_v2
     ports:
       - "8021:8021"
     networks:
-      - pg_network
+      - postgres-docker_pg_network
     volumes:
       # Petakan folder model di dalam container ke volume bernama 'model_data'
       - model_data:/app/model_data 
@@ -18,5 +18,5 @@ volumes:
   model_data:
 
 networks:
-  pg_network:
+  postgres-docker_pg_network:
     external: true
