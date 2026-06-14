@@ -4,8 +4,6 @@ services:
   app:
     build: .
     container_name: pregnancy_app
-    environment:
-      DATABASE_URL: postgresql://ajiandrain:RaihanSecret1309@db:5432/pregnancy_guide_v2
     ports:
       - "8021:5000"
     networks:
