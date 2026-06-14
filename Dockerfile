@@ -43,6 +43,6 @@ COPY src ./src
 # Copy frontend build result
 COPY --from=frontend-builder /dist ./dist
 
-EXPOSE 8021
+EXPOSE 5000
 
 CMD ["python", "main.py"]
