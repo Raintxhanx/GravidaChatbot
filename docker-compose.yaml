@@ -7,7 +7,8 @@ services:
     ports:
       - "8021:5000"
     networks:
-      - pg_network
+      - pg_network_link
+      - default
     volumes:
       # Petakan folder model di dalam container ke volume bernama 'model_data'
       - model_data:/app/model_data 
@@ -16,5 +17,6 @@ volumes:
   model_data:
 
 networks:
-  pg_network:
+  pg_network_link:
     external: true
+    name: postgres-docker_pg_network
