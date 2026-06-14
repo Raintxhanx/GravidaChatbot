@@ -1,4 +1,5 @@
 /venv
+/dist
 
 # Python bytecode
 __pycache__/
@@ -19,3 +20,5 @@ model_data/
 # OS
 Thumbs.db
 .DS_Store
+
+test.py
