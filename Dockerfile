@@ -34,7 +34,7 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install --no-cache-dir -r requirements.txt
+    pip install -r requirements.txt
 
 # Copy backend source
 COPY main.py .

@@ -10,6 +10,12 @@ services:
       - "8021:8021"
     networks:
       - pg_network
+    volumes:
+      # Petakan folder model di dalam container ke volume bernama 'model_data'
+      - model_data:/app/model_data 
+
+volumes:
+  model_data:
 
 networks:
   pg_network:
