@@ -41,7 +41,7 @@ COPY main.py .
 COPY src ./src
 
 # Copy frontend build result
-COPY --from=frontend-builder /frontend/dist ./dist
+COPY --from=frontend-builder /dist ./dist
 
 EXPOSE 8021
 
