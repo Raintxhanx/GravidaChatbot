@@ -4,6 +4,8 @@ services:
   app:
     build: .
     container_name: pregnancy_app
+    env_file:
+      - .env
     ports:
       - "8021:5000"
     networks:
