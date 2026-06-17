@@ -36,7 +36,7 @@ class MessageUseCase(IMessage):
             return
 
         try:
-            # 1. Ambil & Susun History
+            # 1. Ambil & Susun History (Konteks Mentah dari DB)
             first_context = self._db.query(MessageModel).filter(MessageModel.chat_id == chat_id).order_by(MessageModel.created_at.asc()).first()
             
             latest_contexts = []
@@ -59,14 +59,46 @@ class MessageUseCase(IMessage):
                         content_to_send = f"Konteks Dokumen Medis:\n{old_document}\n\nPertanyaan Pasien: {msg.content}"
                 history_dtos.append(MessageContextDTO(role=msg.role, content=content_to_send))
 
-            # 2. RAG Generator & Guardrail Check
-            rag_result_query = self._chat_gen.query_retrieval_generator(history_dtos)
-            is_aborted = rag_result_query.strip().lower() == "abort"
+            # 2. Pembersihan Payload Histori untuk LLM & RAG Generator (Mencakup Trim System Prompt)
+            rag_history_payload = []
+            system_prompt_db = None  # Amankan system prompt asli DB untuk LLM utama nanti
             
+            for dto in history_dtos:
+                if dto.role == "system":
+                    system_prompt_db = dto  # Simpan prompt internal Gravida
+                    continue  # 🔥 TRIM: System prompt bawaan dikeluarkan agar tidak masuk ke payload RAG/Summarize
+                
+                content_str = str(dto.content)
+                if dto.role == "user" and "Pertanyaan Pasien:" in content_str:
+                    try:
+                        content_str = content_str.split("Pertanyaan Pasien:")[-1].strip()
+                    except Exception:
+                        pass
+                
+                rag_history_payload.append(MessageContextDTO(role=dto.role, content=content_str))
+
+            # Evaluasi Keyword via Guardrail LLM
+            rag_evaluation_payload = rag_history_payload.copy()
+            rag_evaluation_payload.append(MessageContextDTO(role="user", content=query))
+
+            # 🔥 KUNCI UTAMA: Konsumsi generator token dari query_retrieval_generator menjadi satu string utuh
+            rag_query_stream = self._chat_gen.query_retrieval_generator(rag_evaluation_payload)
+            rag_result_query = "".join([token for token in rag_query_stream]).strip()
+            
+            # Fallback aman jika LLM mengembalikan string kosong
+            if not rag_result_query:
+                logger.info(f"[MESSAGE SERVICE] RAG Generator blank. Fallback ke query user asli: '{query}'")
+                search_query = query
+            else:
+                search_query = rag_result_query
+
+            is_aborted = search_query.lower() == "abort"
+            
+            # Eksekusi Pencarian ke Vector Database (Qdrant)
             retrieved_document = None
             if not is_aborted:
-                logger.info(f"[MESSAGE SERVICE] Retrieval query: {rag_result_query}")
-                retrieval_success, hits = self._retrieval_service.retrieve(query=rag_result_query)
+                logger.info(f"[MESSAGE SERVICE] Final Retrieval query: {search_query}")
+                retrieval_success, hits = self._retrieval_service.retrieve(query=search_query)
                 if retrieval_success and hits:
                     retrieved_document = hits[0]["payload"].get("full_document_text", "")
 
@@ -90,7 +122,6 @@ class MessageUseCase(IMessage):
                 abort_text = "Maaf, saya hanya dapat membantu pertanyaan yang berfokus pada medis dan kesehatan ibu hamil."
                 yield f"data: {json.dumps({'token': abort_text})}\n\n"
                 
-                # Simpan balasan abort sebagai assistant
                 assistant_msg = MessageModel(
                     id=f"{user_id}_{chat_id}_{user_msg_increment + 1}", chat_id=chat_id,
                     role="assistant", hidden_context=None, content=abort_text
@@ -100,20 +131,26 @@ class MessageUseCase(IMessage):
                 yield "data: [DONE]\n\n"
                 return
 
-            # 5. Gabungkan konteks dan kirim ke LLM Stream
+            # 5. Konstruksi Payload Final khusus untuk LLM Utama (Stream)
             user_content_with_rag = query
             if retrieved_document:
                 user_content_with_rag = f"Konteks Dokumen Medis:\n{retrieved_document}\n\nPertanyaan Pasien: {query}"
 
-            history_dtos.append(MessageContextDTO(role=user_msg.role, content=user_content_with_rag))
+            # Susun final payload dari data yang sudah di-strip bersih
+            final_llm_payload = []
+            if system_prompt_db:
+                final_llm_payload.append(system_prompt_db)
+                
+            final_llm_payload.extend(rag_history_payload)
+            final_llm_payload.append(MessageContextDTO(role=user_msg.role, content=user_content_with_rag))
 
+            # 6. Jalankan Inference Stream
             full_response = ""
-            for token in self._chat_gen.chat_completion_stream(history_dtos):
+            for token in self._chat_gen.chat_completion_stream(final_llm_payload):
                 full_response += token
-                # Yield data dengan format Server-Sent Events (SSE)
                 yield f"data: {json.dumps({'token': token})}\n\n"
 
-            # 6. Simpan Pesan Assistant setelah stream selesai
+            # 7. Simpan Pesan Assistant setelah stream selesai secara utuh
             if full_response:
                 assistant_msg = MessageModel(
                     id=f"{user_id}_{chat_id}_{user_msg_increment + 1}",
@@ -133,33 +170,65 @@ class MessageUseCase(IMessage):
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
 
     def regenerate_last_message(self, chat_id: str, dto: MessageUpdateDTO, user_id_query: UUID) -> Generator[str, None, None]:
-        logger.info(f"[MESSAGE SERVICE] Meminta regenerasi pesan pada Chat ID: {chat_id}")
+        logger.info(f"[MESSAGE SERVICE] Meminta regenerasi/penyuntingan pesan pada Chat ID: {chat_id}")
 
         chat = self._db.query(ChatModel).filter(ChatModel.id == chat_id).first()
-        user_id = chat.user_id
+        if not chat:
+            logger.warning(f"[MESSAGE SERVICE] Sesi chat {chat_id} tidak ditemukan")
+            yield f"data: {json.dumps({'error': 'Chat session tidak ditemukan'})}\n\n"
+            return
 
+        user_id = chat.user_id
         if user_id != user_id_query:
             logger.warning(f"[SECURITY ALERT] User {user_id_query} mencoba akses room {chat_id}")
             yield f"data: {json.dumps({'error': 'Akses ditolak'})}\n\n"
             return
         
         try:
-            last_two_messages = self._db.query(MessageModel).filter(
-                MessageModel.chat_id == chat_id
-            ).order_by(MessageModel.created_at.desc(), MessageModel.id.desc()).limit(2).all()
+            # 1. Ambil Histori Sesuai Pola Context (first_context + 17 message terakhir)
+            first_context = self._db.query(MessageModel).filter(MessageModel.chat_id == chat_id).order_by(MessageModel.created_at.asc()).first()
+            
+            latest_contexts = []
+            if first_context:
+                latest_contexts = self._db.query(MessageModel).filter(
+                    MessageModel.chat_id == chat_id, MessageModel.id != first_context.id
+                ).order_by(MessageModel.created_at.desc()).limit(17).all()
+                latest_contexts.reverse()
 
-            if not last_two_messages:
+            compiled_history = [first_context] + latest_contexts if first_context else latest_contexts
+
+            if not compiled_history:
                 yield f"data: {json.dumps({'error': 'Histori kosong'})}\n\n"
                 return
 
-            for msg in last_two_messages:
-                if msg.role in ["assistant", "user"]:
-                    self._db.delete(msg)
-            
-            self._db.commit()
-            logger.info(f"[MESSAGE SERVICE] Konteks dibersihkan. Memicu ulang stream.")
+            # 2. Cari titik indeks awal mula penghapusan berdasarkan query
+            target_index = None
+            for i, msg in enumerate(compiled_history):
+                if msg.role == "user" and msg.content == dto.query:
+                    target_index = i
+                    break
 
-            # Limpahkan langsung ke fungsi stream utama
+            # Fallback: Jika teks tidak cocok (berarti ini kasus menyunting/edit dengan query baru),
+            # maka cari pesan 'user' paling terakhir sebagai jangkar regenerasi
+            if target_index is None:
+                for i in range(len(compiled_history) - 1, -1, -1):
+                    if compiled_history[i] and compiled_history[i].role == "user":
+                        target_index = i
+                        break
+
+            # 3. Hapus pesan dari indeks target tersebut sampai yang paling terakhir
+            if target_index is not None:
+                messages_to_delete = compiled_history[target_index:]
+                for msg in messages_to_delete:
+                    if msg and msg.role in ["user", "assistant"]:
+                        self._db.delete(msg)
+                
+                self._db.commit()
+                logger.info(f"[MESSAGE SERVICE] Konteks lama dibersihkan dari DB (Index {target_index} s/d terakhir).")
+            else:
+                logger.warning(f"[MESSAGE SERVICE] Tidak menemukan jangkar pesan user untuk diregenerasi.")
+
+            # 4. Limpahkan langsung ke fungsi stream utama dengan query yang baru/lama
             yield from self.handle_user_message(chat_id=chat_id, query=dto.query, user_id_query=user_id)
 
         except Exception as e:

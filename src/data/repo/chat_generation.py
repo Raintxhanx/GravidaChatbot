@@ -124,110 +124,136 @@ class ChatGeneration:
                 options={
                     "temperature": 0.3,
                     "top_p": 0.8,
-                    "repeat_penalty": 1.1,
-                    "stop": ["<|im_end|>", "<|im_start|>"]
-                },
+                    "repeat_penalty": 1.1                },
                 stream=True  # 🔥 AKTIFKAN STREAMING
             )
             
             # 4. Iterasi setiap chunk token yang dikirim oleh Ollama
             for chunk in response_stream:
-                token = chunk.get("message", {}).get("content", "")
+                token = chunk.message.content if chunk.message else ""
                 if token:
-                    yield token  # Kembalikan token satu per satu
+                    yield token
 
         except Exception as e:
             print(f"❌ [Ollama Engine] Error Terjadi saat Stream Completion: {str(e)}")
             raise e
 
-    def query_retrieval_generator(self, history: List[MessageContextDTO]) -> str:
-        """Menghasilkan keyword pencarian ke Qdrant dengan Guardrail Medis & Kehamilan Ketat"""
-        # 1. Jalankan helper validasi bawaan Anda
-        self._validate_and_log_payload("query_retrieval_generator", history)
+    # def query_retrieval_generator(self, history: List[MessageContextDTO]) -> str:
+    #     """Menghasilkan keyword pencarian ke Qdrant dengan Guardrail Medis & Kehamilan Ketat"""
+    #     # 1. Jalankan helper validasi bawaan Anda
+    #     self._validate_and_log_payload("query_retrieval_generator", history)
         
-        # 2. System Prompt khusus Inggris untuk Guardrail + Keyword Extraction
-        system_prompt_extractor = (
-            "You are an expert medical search query optimizer for a RAG system specializing strictly in maternal health and pregnancy.\n"
-            "Your task is to analyze the user's request and transform it into a clear, highly specific natural language question in Indonesian. "
-            "Because the target vector database contains detailed medical consultations (Patient Questions and Doctor Answers), structuring the query as a complete question ensures the highest semantic retrieval accuracy.\n\n"
-            "CRITICAL SECURITY GUARDRAILS:\n"
-            "1. You MUST ONLY service queries related to medical health, specifically focusing on pregnant women (ibu hamil), pregnancy symptoms, prenatal care, or fetal development.\n"
-            "2. If the user's prompt is OUTSIDE of medical health or pregnancy context (e.g., casual chit-chat, IT/coding, general cooking, math, generic jokes), you MUST reply with exactly one word: \"abort\". Do not include any other words, punctuation, or explanations.\n"
-            "3. If the query is valid, output ONLY the optimized medical question in Indonesian (e.g., \"Berapa kenaikan berat badan yang ideal untuk ibu hamil di trimester ketiga?\"). Do not wrap it in quotes, and do not include any introductory text, separate keywords, or explanations."
-        )
+    #     # 2. System Prompt khusus Inggris untuk Guardrail + Keyword Extraction
+    #     system_prompt_extractor = (
+    #         "You are an expert medical search query optimizer for a RAG system specializing strictly in maternal health and pregnancy.\n"
+    #         "Your task is to analyze the user's request and transform it into a clear, highly specific natural language question in Indonesian. "
+    #         "Because the target vector database contains detailed medical consultations (Patient Questions and Doctor Answers), structuring the query as a complete question ensures the highest semantic retrieval accuracy.\n\n"
+    #         "CRITICAL SECURITY GUARDRAILS:\n"
+    #         "1. You MUST ONLY service queries related to medical health, specifically focusing on pregnant women (ibu hamil), pregnancy symptoms, prenatal care, or fetal development.\n"
+    #         "2. If the user's prompt is OUTSIDE of medical health or pregnancy context (e.g., casual chit-chat, IT/coding, general cooking, math, generic jokes), you MUST reply with exactly one word: \"abort\". Do not include any other words, punctuation, or explanations.\n"
+    #         "3. If the query is valid, output ONLY the optimized medical question in Indonesian (e.g., \"Berapa kenaikan berat badan yang ideal untuk ibu hamil di trimester ketiga?\"). Do not wrap it in quotes, and do not include any introductory text, separate keywords, or explanations."
+    #     )
         
-        # 3. Susun array percakapan khusus untuk Ollama
-        #    Kita tempatkan system_prompt_extractor di paling atas
-        formatted_messages = [{"role": "system", "content": system_prompt_extractor}]
+    #     # 3. Susun array percakapan khusus untuk Ollama
+    #     #    Kita tempatkan system_prompt_extractor di paling atas
+    #     formatted_messages = [{"role": "system", "content": system_prompt_extractor}]
         
-        # Masukkan riwayat pesan user/assistant (abaikan system prompt asli DB agar tidak bentrok)
-        for msg in history:
-            if msg.role != "system":
-                formatted_messages.append({"role": msg.role, "content": msg.content})
+    #     # Masukkan riwayat pesan user/assistant (abaikan system prompt asli DB agar tidak bentrok)
+    #     for msg in history:
+    #         if msg.role != "system":
+    #             formatted_messages.append({"role": msg.role, "content": msg.content})
         
-        try:
-            print(f"🔮 [Ollama Engine] Mengevaluasi konteks & mengekstrak RAG Query...")
+    #     try:
+    #         print(f"🔮 [Ollama Engine] Mengevaluasi konteks & mengekstrak RAG Query...")
             
-            # 4. Hit ke Ollama dengan temperature=0.0 agar rules dijalankan secara mutlak
-            response = self.client.chat(
-                model=self.model_name,
-                messages=formatted_messages,
-                options={
-                    "temperature": 0.0,   # Wajib 0.0 agar jawaban "abort" konsisten saat off-context
-                    "top_p": 0.1,
-                    "stop": ["<|im_end|>", "<|im_start|>"]
-                }
-            )
+    #         response = self.client.chat(
+    #             model=self.model_name,
+    #             messages=formatted_messages,
+    #             options={
+    #                 "temperature": 0.0,   
+    #                 "top_p": 0.1,
+    #             }
+    #         )
             
-            # 5. Ambil output teks dan bersihkan dari whitespace atau kutipan yang tidak disengaja
-            raw_output = response.get("message", {}).get("content", "").strip()
-            cleaned_query = raw_output.strip("'\"")
+    #         # 💡 SINKRONISASI: Menggunakan dot notation Pydantic
+    #         raw_output = response.message.content.strip() if response.message else ""
+    #         cleaned_query = raw_output.strip("'\"")
             
-            print(f"🔮 [Ollama Engine] Hasil Evaluasi Generator: \"{cleaned_query}\"")
-            return cleaned_query
+    #         print(f"🔮 [Ollama Engine] Hasil Evaluasi Generator: \"{cleaned_query}\"")
+    #         return cleaned_query
 
-        except Exception as e:
-            print(f"❌ [Ollama Engine] Error pada query_retrieval_generator: {str(e)}")
-            raise e
+    #     except Exception as e:
+    #         print(f"❌ [Ollama Engine] Error pada query_retrieval_generator: {str(e)}")
+    #         raise e
 
-    def summarize(self, history: List[MessageContextDTO]) -> str:
-        """Simulasi merangkum chat untuk kolom deskripsi room"""
-        self._validate_and_log_payload("summarize", history)
+    # def summarize(self, history: List[MessageContextDTO]) -> str:
+    #     """Simulasi merangkum chat untuk kolom deskripsi room - FIXED VERSION"""
+    #     self._validate_and_log_payload("summarize", history)
         
-        # PERBAIKAN: Gunakan Summarizer di sini
-        system_prompt_summarizer = (
-            "You are an expert AI summarizer. Your task is to analyze the chat history and generate a highly concise room description in Indonesian.\n\n"
-            "CRITICAL RULES:\n"
-            "1. MAX LENGTH: Your summary MUST be a maximum of 3 sentences and STRICTLY UNDER 50 words.\n"
-        )
+    #     system_prompt_summarizer = (
+    #         "You are an expert AI summarizer. Your task is to analyze the chat history and generate a highly concise room description in Indonesian.\n\n"
+    #         "CRITICAL RULES:\n"
+    #         "1. MAX LENGTH: Your summary MUST be a maximum of 3 sentences and STRICTLY UNDER 50 words.\n"
+    #         "2. You MUST generate a response. Do not leave it empty.\n"
+    #         "3. Write in Indonesian language only."
+    #     )
 
-        formatted_messages = [{"role": "system", "content": system_prompt_summarizer}]
+    #     formatted_messages = [{"role": "system", "content": system_prompt_summarizer}]
 
-        for msg in history:
-            if msg.role != "system":
-                formatted_messages.append({"role": msg.role, "content": msg.content})
-        
-        try:            
-            # Berikan sedikit temperature untuk variasi bahasa
-            response = self.client.chat(
-                model=self.model_name,
-                messages=formatted_messages,
-                options={
-                    "temperature": 0.3,
-                    "top_p": 0.5,
-                    "stop": ["<|im_end|>", "<|im_start|>"]
-                }
-            )
+    #     for msg in history:
+    #         if msg.role != "system":
+    #             formatted_messages.append({"role": msg.role, "content": msg.content})
+
+    #     formatted_messages.append({
+    #         "role": "user", 
+    #         "content": "Buatkan rangkuman maksimal 3 kalimat dari seluruh percakapan kita di atas."
+    #     })
+
+    #     try:            
+    #         print(f"🔮 [Ollama Engine] Mengirim request summarize ke model: {self.model_name}...")
             
-            raw_output = response.get("message", {}).get("content", "").strip()
-            cleaned_query = raw_output.strip("'\"")
+    #         response = self.client.chat(
+    #             model=self.model_name,
+    #             messages=formatted_messages,
+    #             options={
+    #                 "temperature": 0.3,      
+    #                 "top_p": 0.5,            
+    #                 "num_ctx": 4096,
+    #                 "num_predict": 100,      
+    #                 "repeat_penalty": 1.1    
+    #             }
+    #         )
             
-            print(f"🔮 [Ollama Engine] Summary Dibuat : \"{cleaned_query}\"")
-            return cleaned_query
+    #         logging.debug(f"[OLLAMA RAW RESPONSE] {response.model_dump_json(indent=2)}")
+            
+    #         # 💡 PERBAIKAN 1: Mengakses content dengan Dot Notation khas Pydantic
+    #         raw_output = response.message.content.strip() if response.message else ""
+    #         cleaned_query = raw_output.strip("'\"")
+            
+    #         if not cleaned_query:
+    #             # 💡 PERBAIKAN 2: Gunakan model_dump().keys() agar tidak error AttributeError
+    #             response_keys = list(response.model_dump().keys())
+    #             logging.warning(
+    #                 f"[Ollama Engine] ⚠️ Empty response from model. "
+    #                 f"Raw output: '{raw_output}' | Response keys: {response_keys}"
+    #             )
+    #             # Fallback: Generate basic summary dari pesan pertama & terakhir
+    #             if len(history) >= 2:
+    #                 first_user_msg = next((h.content for h in history if h.role == "user"), "Chat")
+    #                 return f"Konsultasi tentang: {str(first_user_msg)[:50]}..."
+    #             else:
+    #                 return "Sesi chat dengan dokter Gravida"
+            
+    #         print(f"✅ [Ollama Engine] Summary Dibuat : \"{cleaned_query}\"")
+    #         return cleaned_query
 
-        except Exception as e:
-            print(f"❌ [Ollama Engine] Error pada summarize: {str(e)}")
-            raise e
+    #     except Exception as e:
+    #         logging.error(f"❌ [Ollama Engine] Error pada summarize: {str(e)}", exc_info=True)
+    #         # ✅ ADDED: Fallback instead of raising exception
+    #         if len(history) >= 2:
+    #             first_user_msg = next((h.content for h in history if h.role == "user"), "Chat")
+    #             return f"Konsultasi tentang: {str(first_user_msg)[:50]}..."
+    #         return "Sesi chat dengan dokter Gravida"
 
     def title_generation(self, query: str) -> str:
         """Generasi otomatis judul chat berdasarkan query pertama user"""        
@@ -237,3 +263,97 @@ class ChatGeneration:
         
         print(f"🔮 [Ollama Engine] Chat baru tergenerate dengan judul: \"{short_title}\"")
         return short_title
+
+    def query_retrieval_generator(self, history: List[MessageContextDTO]):
+        """Menghasilkan keyword/pertanyaan optimasi untuk pencarian RAG (Streaming)"""
+        # 1. Validasi input payload menggunakan helper bawaan
+        self._validate_and_log_payload("query_retrieval_generator", history)
+        
+        try:
+            print(f"🔮 [Ollama Engine] Membuka stream ke model untuk RAG Optimizer: '{self.model_name}'...")
+
+            system_prompt = (
+                "You are an expert medical search query optimizer for a RAG system specializing strictly in maternal health and pregnancy.\n"
+                "Your task is to analyze the user's request and transform it into a clear, highly specific natural language question in Indonesian. "
+                "Because the target vector database contains detailed medical consultations (Patient Questions and Doctor Answers), structuring the query as a complete question ensures the highest semantic retrieval accuracy.\n\n"
+                "CRITICAL SECURITY GUARDRAILS:\n"
+                "1. You MUST ONLY service queries related to medical health, specifically focusing on pregnant women (ibu hamil), pregnancy symptoms, prenatal care, or fetal development.\n"
+                "2. If the user's prompt is OUTSIDE of medical health or pregnancy context (e.g., casual chit-chat, IT/coding, general cooking, math, generic jokes), you MUST reply with exactly one word: \"abort\". Do not include any other words, punctuation, or explanations.\n"
+                "3. If the query is valid, output ONLY the optimized medical question in Indonesian (e.g., \"Berapa kenaikan berat badan yang ideal untuk ibu hamil di trimester ketiga?\"). Do not wrap it in quotes, and do not include any introductory text, separate keywords, or explanations."
+            )
+
+            # 2. Konversi seluruh objek DTO history menjadi satu teks tunggal untuk User Prompt
+            conversation_text = "\n".join([f"{msg.role}: {msg.content}" for msg in history])
+
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": f"Berikut adalah riwayat percakapan yang harus dievaluasi:\n\n{conversation_text}"}
+            ]
+            
+            response_stream = self.client.chat(
+                model=self.model_name,
+                messages=messages,
+                options={
+                    "temperature": 0.0,
+                    "top_p": 0.1,
+                },
+                stream=True
+            )
+            
+            # 3. Yield token secara beruntun (Streaming)
+            for chunk in response_stream:
+                token = chunk.message.content if chunk.message else ""
+                if token:
+                    yield token
+
+        except Exception as e:
+            print(f"❌ [Ollama Engine] Error Terjadi saat Stream RAG Query: {str(e)}")
+            raise e
+
+    def summarize(self, history: List[MessageContextDTO]):
+        """Membuat ringkasan riwayat percakapan secara streaming untuk deskripsi room"""
+        # 1. Validasi input payload menggunakan helper bawaan
+        self._validate_and_log_payload("summarize", history)
+        
+        try:
+            print(f"🔮 [Ollama Engine] Membuka stream ke model untuk Summarizer: '{self.model_name}'...")
+
+            system_prompt_summarizer = (
+                "You are an expert AI summarizer. Your task is to analyze the chat history and generate a highly concise room description in Indonesian.\n\n"
+                "CRITICAL RULES:\n"
+                "1. MAX LENGTH: Your summary MUST be a maximum of 3 sentences and STRICTLY UNDER 50 words.\n"
+                "2. You MUST generate a response. Do not leave it empty.\n"
+                "3. Write in Indonesian language only."
+            )
+
+            # 2. Konversi seluruh objek DTO history menjadi satu teks tunggal untuk User Prompt
+            conversation_text = "\n".join([f"{msg.role}: {msg.content}" for msg in history])
+
+            messages = [
+                {"role": "system", "content": system_prompt_summarizer},
+                {"role": "user", "content": f"Buatkan rangkuman maksimal 3 kalimat dari seluruh percakapan ini:\n\n{conversation_text}"}
+            ]
+
+            # 3. Panggil API Chat Ollama dengan konfigurasi Streaming
+            response_stream = self.client.chat(
+                model=self.model_name,
+                messages=messages,
+                options={
+                    "temperature": 0.3,
+                    "top_p": 0.5,
+                    "num_ctx": 4096,
+                    "num_predict": 100,
+                    "repeat_penalty": 1.1
+                },
+                stream=True  # 🔥 AKTIFKAN STREAMING
+            )
+
+            # 4. Yield token secara beruntun (Streaming)
+            for chunk in response_stream:
+                token = chunk.message.content if chunk.message else ""
+                if token:
+                    yield token
+
+        except Exception as e:
+            print(f"❌ [Ollama Engine] Error Terjadi saat Stream Summarize: {str(e)}")
+            raise e

@@ -28,4 +28,4 @@ class ChatGetAllDTO(BaseModel):
     limit: int = Field(10, ge=1, le=100)
     skip: int = Field(0, ge=0)
     start_date: Optional[datetime] = None  # Diubah menjadi opsional
-    end_date: Optional[datetime] = None    # Menggantikan duplikasi start_date sebelumny
+    end_date: Optional[datetime] = None    # Menggantikan duplikasi start_date sebelumnya

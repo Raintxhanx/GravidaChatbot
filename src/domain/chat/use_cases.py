@@ -157,9 +157,13 @@ class ChatUseCase(IChat):
         try:
             # 1. Evaluasi Guardrail
             initial_context = [MessageContextDTO(role="user", content=query)]
-            rag_result_query = self._chat_gen.query_retrieval_generator(initial_context)
             
-            if rag_result_query.strip().lower() == "abort":
+            # 🔥 PERBAIKAN DI SINI: Konsumsi generator menjadi string utuh
+            rag_result_stream = self._chat_gen.query_retrieval_generator(initial_context)
+            rag_result_query = "".join([token for token in rag_result_stream]).strip()
+            
+            # Sekarang Anda bisa melakukan pengecekan string dengan aman
+            if rag_result_query.lower() == "abort":
                 logger.warning(f"[GUARDRAIL] Deteksi prompt luar konteks: '{query}'")
                 raise ValueError("Maaf, saya hanya dapat membantu menjawab pertanyaan seputar kesehatan ibu hamil dan kehamilan.")
 
@@ -170,6 +174,7 @@ class ChatUseCase(IChat):
             # 3. Retrieval ke Qdrant
             retrieval_success, hits = self._retrieval_service.retrieve(query=rag_result_query)
             retrieved_document = None
+            logger.info(f"[MESSAGE SERVICE] Final Retrieval query: {rag_result_query}")
             if retrieval_success and hits:
                 retrieved_document = hits[0]["payload"].get("full_document_text", "")
 
@@ -285,27 +290,29 @@ class ChatUseCase(IChat):
             raise ValueError("Akses ditolak: Anda bukan pemilik room chat ini")
 
         try:
-            # 3. Ambil messages
-            first_msg = (
+            # 3. Ambil messages khusus yang BUKAN 'system' prompt bawaan DB
+            # Kita ingin murni mengambil percakapan user & assistant saja (Trim System Prompt)
+            chat_messages = (
                 self._db.query(MessageModel)
-                .filter(MessageModel.chat_id == chat_id)
+                .filter(
+                    MessageModel.chat_id == chat_id,
+                    MessageModel.role != "system"  # 🔥 KUNCI: Buang system prompt internal
+                )
                 .order_by(MessageModel.created_at.asc())
-                .first()
-            )
-            
-            if not first_msg:
-                raise ValueError("Chat room belum memiliki pesan untuk dirangkum")
-
-            latest_msgs = (
-                self._db.query(MessageModel)
-                .filter(MessageModel.chat_id == chat_id, MessageModel.id != first_msg.id)
-                .order_by(MessageModel.created_at.desc())
-                .limit(19)
                 .all()
             )
-            latest_msgs.reverse()
+            
+            if not chat_messages:
+                raise ValueError("Chat room belum memiliki pesan user/assistant untuk dirangkum")
 
-            compiled = [first_msg] + latest_msgs
+            # Strategi mengambil 20 pesan (pesan pertama user + 19 pesan terakhir)
+            first_user_msg = chat_messages[0]
+            remaining_msgs = chat_messages[1:]
+            
+            # Ambil maksimal 19 pesan terbaru dari sisa percakapan
+            latest_msgs = remaining_msgs[-19:] if len(remaining_msgs) > 19 else remaining_msgs
+
+            compiled = [first_user_msg] + latest_msgs
             
             # 4. Konversi ke DTO
             history_dto = [
@@ -313,10 +320,11 @@ class ChatUseCase(IChat):
                 for msg in compiled
             ]
 
-            # 5. Hit Ollama
-            summary_text = self._chat_gen.summarize(history_dto)
+            # 5. Hit Ollama & Konsumsi Stream (Karena .summarize() sekarang adalah generator)
+            summary_stream = self._chat_gen.summarize(history_dto)
+            summary_text = "".join([token for token in summary_stream]).strip()
             
-            if not summary_text or summary_text.strip() == "":
+            if not summary_text:
                 raise ValueError("Ollama gagal menghasilkan rangkuman")
 
             # 6. Update DB
