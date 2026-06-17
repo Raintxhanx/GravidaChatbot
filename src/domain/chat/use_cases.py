@@ -31,126 +31,218 @@ class ChatUseCase(IChat):
         self._retrieval_service = retrieval_service
 
 
-    def create_new_chat_session(self, user_id: UUID, query: str) -> List[MessageResponseDTO]:
-        logger.info(f"[CHAT SERVICE] Mencoba membuat sesi chat baru untuk User ID: {user_id}")
+    # def create_new_chat_session(self, user_id: UUID, query: str) -> List[MessageResponseDTO]:
+    #     logger.info(f"[CHAT SERVICE] Mencoba membuat sesi chat baru untuk User ID: {user_id}")
+        
+    #     try:
+    #         # 1. Evaluasi Guardrail & Optimasi Query di Awal
+    #         initial_context = [MessageContextDTO(role="user", content=query)]
+    #         rag_result_query = self._chat_gen.query_retrieval_generator(initial_context)
+            
+    #         # 🔥 FIX BUG 1 & 2: Cegat langsung jika terdeteksi "abort" (off-context)
+    #         if rag_result_query.strip().lower() == "abort":
+    #             logger.warning(f"[GUARDRAIL] Deteksi prompt luar konteks saat membuat chat baru: '{query}'")
+    #             raise ValueError("Maaf, saya hanya dapat membantu menjawab pertanyaan seputar kesehatan ibu hamil dan kehamilan.")
+
+    #         # 2. Judul baru dibuat jika lolos guardrail
+    #         generated_title = self._chat_gen.title_generation(query)
+            
+    #         # 🔥 FIX MASALAH 3: Gunakan full UUID demi keamanan jangka panjang
+    #         chat_id = f"chat_{uuid.uuid4().hex.upper()}"
+            
+    #         # 3. Jalankan proses Retrieval ke Qdrant (Hanya jika lolos guardrail)
+    #         logger.info(f"[CHAT SERVICE] Melakukan retrieval dengan query: {rag_result_query}")
+    #         retrieval_success, hits = self._retrieval_service.retrieve(query=rag_result_query)
+            
+    #         retrieved_document = None
+    #         if retrieval_success and hits:
+    #             retrieved_document = hits[0]["payload"].get("full_document_text", "")
+    #             logger.info(f"[CHAT SERVICE] Retrieval sukses. Score: {hits[0]['score']}")
+    #         else:
+    #             logger.warning("[CHAT SERVICE] Retrieval tidak mengembalikan hasil atau gagal.")
+
+    #         hidden_context_payload = {
+    #             "rag_query_instruction": rag_result_query,
+    #             "retrieved_context": retrieved_document
+    #         }
+
+    #         # 4. Simpan info ChatRoom ke DB
+    #         new_chat = ChatModel(
+    #             id=chat_id,
+    #             user_id=user_id,
+    #             title=generated_title,
+    #             description=None
+    #         )
+    #         self._db.add(new_chat)
+
+    #         # 5. Buat Record Message 1: role='system'
+    #         system_msg = MessageModel(
+    #             id=f"{user_id}_{chat_id}_1",
+    #             chat_id=chat_id,
+    #             role="system",
+    #             hidden_context=None,
+    #             content=(
+    #                 "You are a professional, empathetic, and reassuring doctor from Gravida. "
+    #                 "You must always respond in polite, natural, and caring Indonesian. Provide accurate and factual medical answers. "
+    #                 "If a context is included in the user's prompt, make sure to STRICTLY use only the facts from the context below to answer the question. "
+    #                 "Do not hallucinate, guess, or make up any medical information. "
+    #                 "If the context does not contain the answer, politely state that you cannot answer based on the provided information."
+    #             )
+    #         )
+    #         self._db.add(system_msg)
+
+    #         # 6. Buat Record Message 2: role='user'
+    #         user_msg = MessageModel(
+    #             id=f"{user_id}_{chat_id}_2",
+    #             chat_id=chat_id,
+    #             role="user",
+    #             hidden_context=hidden_context_payload,
+    #             content=query
+    #         )
+    #         self._db.add(user_msg)
+
+    #         # 7. Pengayaan prompt dengan konteks medis untuk LLM Utama
+    #         user_content_with_rag = query
+    #         if retrieved_document:
+    #             user_content_with_rag = (
+    #                 f"### KONTEKS DOKUMEN MEDIS\n"
+    #                 f"{retrieved_document}\n\n"
+    #                 f"### INSTRUKSI TAMBAHAN\n"
+    #                 f"Jawablah pertanyaan pasien di bawah dengan melakukan parafrase secara alami, "
+    #                 f"sopan, dan penuh empati. Sampaikan informasi dengan bahasa Anda sendiri sebisa mungkin, "
+    #                 f"tetapi JANGAN PERNAH menambahkan informasi medis, asumsi, atau diagnosis baru yang "
+    #                 f"tidak tertulis di dalam teks konteks di atas.\n\n"
+    #                 f"### PERTANYAAN PASIEN\n"
+    #                 f"{query}"
+    #             )
+
+    #         history_for_llm = [
+    #             MessageContextDTO(role=system_msg.role, content=system_msg.content),
+    #             MessageContextDTO(role=user_msg.role, content=user_content_with_rag)
+    #         ]
+
+    #         # Panggil LLM utama
+    #         llm_response_text = self._chat_gen.chat_completion(history_for_llm)
+
+    #         # 8. Buat Record Message 3: role='assistant'
+    #         assistant_msg = MessageModel(
+    #             id=f"{user_id}_{chat_id}_3",
+    #             chat_id=chat_id,
+    #             role="assistant",
+    #             hidden_context=None,
+    #             content=llm_response_text
+    #         )
+    #         self._db.add(assistant_msg)
+
+    #         # Commit seluruh rangkaian transaksi data ke DB secara atomik
+    #         self._db.commit()
+            
+    #         logger.info(f"[CHAT SERVICE] Berhasil membuat Chat Room {chat_id} dengan RAG context.")
+            
+    #         return [
+    #             MessageResponseDTO.model_validate(system_msg),
+    #             MessageResponseDTO.model_validate(user_msg),
+    #             MessageResponseDTO.model_validate(assistant_msg)
+    #         ]
+
+    #     except Exception as e:
+    #         self._db.rollback()
+    #         logger.error(f"[CHAT SERVICE] Gagal sistem saat membuat sesi chat baru: {e}", exc_info=True)
+    #         raise e
+
+    def prepare_chat_session(self, user_id: UUID, query: str) -> tuple[str, str, List[MessageContextDTO]]:
+        """Tahap 1: Sinkronus - Melakukan guardrail, retrieval, dan simpan chat awal ke DB"""
+        logger.info(f"[CHAT SERVICE] Mempersiapkan sesi chat baru untuk User ID: {user_id}")
         
         try:
-            # 1. Evaluasi Guardrail & Optimasi Query di Awal
+            # 1. Evaluasi Guardrail
             initial_context = [MessageContextDTO(role="user", content=query)]
             rag_result_query = self._chat_gen.query_retrieval_generator(initial_context)
             
-            # 🔥 FIX BUG 1 & 2: Cegat langsung jika terdeteksi "abort" (off-context)
             if rag_result_query.strip().lower() == "abort":
-                logger.warning(f"[GUARDRAIL] Deteksi prompt luar konteks saat membuat chat baru: '{query}'")
+                logger.warning(f"[GUARDRAIL] Deteksi prompt luar konteks: '{query}'")
                 raise ValueError("Maaf, saya hanya dapat membantu menjawab pertanyaan seputar kesehatan ibu hamil dan kehamilan.")
 
-            # 2. Judul baru dibuat jika lolos guardrail
+            # 2. Judul & ID
             generated_title = self._chat_gen.title_generation(query)
-            
-            # 🔥 FIX MASALAH 3: Gunakan full UUID demi keamanan jangka panjang
             chat_id = f"chat_{uuid.uuid4().hex.upper()}"
             
-            # 3. Jalankan proses Retrieval ke Qdrant (Hanya jika lolos guardrail)
-            logger.info(f"[CHAT SERVICE] Melakukan retrieval dengan query: {rag_result_query}")
+            # 3. Retrieval ke Qdrant
             retrieval_success, hits = self._retrieval_service.retrieve(query=rag_result_query)
-            
             retrieved_document = None
             if retrieval_success and hits:
                 retrieved_document = hits[0]["payload"].get("full_document_text", "")
-                logger.info(f"[CHAT SERVICE] Retrieval sukses. Score: {hits[0]['score']}")
-            else:
-                logger.warning("[CHAT SERVICE] Retrieval tidak mengembalikan hasil atau gagal.")
 
             hidden_context_payload = {
                 "rag_query_instruction": rag_result_query,
                 "retrieved_context": retrieved_document
             }
 
-            # 4. Simpan info ChatRoom ke DB
-            new_chat = ChatModel(
-                id=chat_id,
-                user_id=user_id,
-                title=generated_title,
-                description=None
-            )
+            # 4. Simpan info ChatRoom ke DB (Commit di awal agar ID valid terdaftar)
+            new_chat = ChatModel(id=chat_id, user_id=user_id, title=generated_title, description=None)
             self._db.add(new_chat)
 
-            # 5. Buat Record Message 1: role='system'
+            # 5. Buat Record Message 1: system
             system_msg = MessageModel(
-                id=f"{user_id}_{chat_id}_1",
-                chat_id=chat_id,
-                role="system",
-                hidden_context=None,
-                content=(
-                    "You are a professional, empathetic, and reassuring doctor from Gravida. "
-                    "You must always respond in polite, natural, and caring Indonesian. Provide accurate and factual medical answers. "
-                    "If a context is included in the user's prompt, make sure to STRICTLY use only the facts from the context below to answer the question. "
-                    "Do not hallucinate, guess, or make up any medical information. "
-                    "If the context does not contain the answer, politely state that you cannot answer based on the provided information."
-                )
+                id=f"{user_id}_{chat_id}_1", chat_id=chat_id, role="system", hidden_context=None,
+                content="You are a professional, empathetic, and reassuring doctor from Gravida..."
             )
             self._db.add(system_msg)
 
-            # 6. Buat Record Message 2: role='user'
+            # 6. Buat Record Message 2: user
             user_msg = MessageModel(
-                id=f"{user_id}_{chat_id}_2",
-                chat_id=chat_id,
-                role="user",
-                hidden_context=hidden_context_payload,
-                content=query
+                id=f"{user_id}_{chat_id}_2", chat_id=chat_id, role="user", hidden_context=hidden_context_payload, content=query
             )
             self._db.add(user_msg)
 
-            # 7. Pengayaan prompt dengan konteks medis untuk LLM Utama
+            # Commit tahap awal secara atomik, bebaskan koneksi DB sementara waktu
+            self._db.commit()
+            
+            # 7. Pengayaan prompt RAG untuk LLM Utama
             user_content_with_rag = query
             if retrieved_document:
-                user_content_with_rag = (
-                    f"### KONTEKS DOKUMEN MEDIS\n"
-                    f"{retrieved_document}\n\n"
-                    f"### INSTRUKSI TAMBAHAN\n"
-                    f"Jawablah pertanyaan pasien di bawah dengan melakukan parafrase secara alami, "
-                    f"sopan, dan penuh empati. Sampaikan informasi dengan bahasa Anda sendiri sebisa mungkin, "
-                    f"tetapi JANGAN PERNAH menambahkan informasi medis, asumsi, atau diagnosis baru yang "
-                    f"tidak tertulis di dalam teks konteks di atas.\n\n"
-                    f"### PERTANYAAN PASIEN\n"
-                    f"{query}"
-                )
+                user_content_with_rag = f"### KONTEKS DOKUMEN MEDIS\n{retrieved_document}\n\n### PERTANYAAN PASIEN\n{query}"
 
             history_for_llm = [
                 MessageContextDTO(role=system_msg.role, content=system_msg.content),
                 MessageContextDTO(role=user_msg.role, content=user_content_with_rag)
             ]
 
-            # Panggil LLM utama
-            llm_response_text = self._chat_gen.chat_completion(history_for_llm)
-
-            # 8. Buat Record Message 3: role='assistant'
-            assistant_msg = MessageModel(
-                id=f"{user_id}_{chat_id}_3",
-                chat_id=chat_id,
-                role="assistant",
-                hidden_context=None,
-                content=llm_response_text
-            )
-            self._db.add(assistant_msg)
-
-            # Commit seluruh rangkaian transaksi data ke DB secara atomik
-            self._db.commit()
-            
-            logger.info(f"[CHAT SERVICE] Berhasil membuat Chat Room {chat_id} dengan RAG context.")
-            
-            return [
-                MessageResponseDTO.model_validate(system_msg),
-                MessageResponseDTO.model_validate(user_msg),
-                MessageResponseDTO.model_validate(assistant_msg)
-            ]
+            return chat_id, generated_title, history_for_llm
 
         except Exception as e:
             self._db.rollback()
-            logger.error(f"[CHAT SERVICE] Gagal sistem saat membuat sesi chat baru: {e}", exc_info=True)
             raise e
 
-    
+
+    def stream_llm_and_save_assistant(self, user_id: UUID, chat_id: str, history_for_llm: List[MessageContextDTO]):
+        """Tahap 2: Streaming - Mengalirkan token LLM dan menyimpannya setelah selesai"""
+        full_assistant_response = ""
+        
+        # Panggil generator stream dari Ollama Engine
+        token_stream = self._chat_gen.chat_completion_stream(history_for_llm)
+        
+        for token in token_stream:
+            full_assistant_response += token
+            yield token  # Yield ke controller agar langsung diteruskan ke pasien
+            
+        # 8. Setelah streaming selesai secara utuh, simpan hasilnya ke DB (Transaksi Baru)
+        if full_assistant_response:
+            try:
+                assistant_msg = MessageModel(
+                    id=f"{user_id}_{chat_id}_3",
+                    chat_id=chat_id,
+                    role="assistant",
+                    hidden_context=None,
+                    content=full_assistant_response
+                )
+                self._db.add(assistant_msg)
+                self._db.commit()
+                logger.info(f"[CHAT SERVICE] Respon asisten berhasil disimpan ke DB untuk Chat ID: {chat_id}")
+            except Exception as e:
+                self._db.rollback()
+                logger.error(f"[CHAT SERVICE] Gagal menyimpan potongan chat asisten ke DB: {e}")
+
     def update_chat_session(self, chat_id: str, dto: ChatUpdateDTO, user_id:UUID) -> ChatResponseDTO:
         logger.info(f"[CHAT SERVICE] Memperbarui properti room chat ID: {chat_id}")
         

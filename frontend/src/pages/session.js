@@ -281,57 +281,145 @@ export const SessionPage = {
 
             try {
                 if (chatId === 'new') {
-                    chatStatus.textContent = 'Sedang membuat sesi...';
-                    
-                    const res = await fetch(`${API_URL}/api/v1/chats`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ query: text })
-                    });
-                    const result = await res.json();
-                    typingIndicator.classList.add('hidden');
+                // === LOGIKA UNTUK CHAT BARU (STREAMING SSE) ===
+                chatStatus.textContent = 'Sedang membuat sesi...';
+                
+                const res = await fetch(`${API_URL}/api/v1/chats`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'text/event-stream' // Sesuaikan dengan backend
+                    },
+                    body: JSON.stringify({ query: text })
+                });
+                
+                typingIndicator.classList.add('hidden');
 
-                    if (res.ok && result.success) {
-                        const msgArray = result.data || [];
-                        const assistantMsg = msgArray.find(m => m.role === 'assistant');
+                if (res.ok) {
+                    // Buat bubble assistant kosong di awal
+                    const streamMsgId = `stream_${Date.now()}`;
+                    appendMessage({ id: streamMsgId, role: 'assistant', content: '' });
+                    const contentContainer = document.querySelector(`#msg-${streamMsgId} .bg-white`);
+                    
+                    // Mulai membaca stream
+                    const reader = res.body.getReader();
+                    const decoder = new TextDecoder("utf-8");
+                    let fullText = "";
+                    
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
                         
-                        if (assistantMsg) {
-                            appendMessage(assistantMsg);
-                            
-                            chatId = assistantMsg.chat_id;
-                            window.history.replaceState(null, '', `/session/${chatId}`);
-                            chatStatus.textContent = 'Aktif';
-                            
-                            await fetchChatDetails();
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n');
+                        
+                        for (const line of lines) {
+                            if (line.startsWith('data: ')) {
+                                const dataStr = line.substring(6).trim();
+                                
+                                if (dataStr === '[DONE]') break;
+                                if (!dataStr) continue;
+                                
+                                try {
+                                    const parsed = JSON.parse(dataStr);
+                                    
+                                    // 1. Tangkap metadata di awal stream untuk update URL & Info Sesi
+                                    if (parsed.type === 'metadata') {
+                                        chatId = parsed.chat_id;
+                                        window.history.replaceState(null, '', `/session/${chatId}`);
+                                        chatStatus.textContent = 'Aktif';
+                                        fetchChatDetails(); // Refresh detail UI
+                                    } 
+                                    // 2. Tangkap token LLM dan render real-time
+                                    else if (parsed.type === 'token') {
+                                        fullText += parsed.content;
+                                        contentContainer.innerHTML = formatText(fullText);
+                                        scrollToBottom();
+                                    }
+                                    // 3. Tangani error jika terjadi kegagalan sistem
+                                    else if (parsed.error || parsed.success === false) {
+                                        fullText += `\n[Error: ${parsed.error || parsed.message}]`;
+                                        contentContainer.innerHTML = formatText(fullText);
+                                        scrollToBottom();
+                                    }
+                                } catch (e) {
+                                    console.error("Gagal parsing token", e);
+                                }
+                            }
                         }
-                    } else {
-                        appendMessage({ id: 'err', role: 'assistant', content: 'Maaf, gagal memulai obrolan.' });
                     }
+                } else {
+                    // Jika status HTTP tidak OK (misal 422 Guardrail Abort)
+                    const errData = await res.json().catch(() => ({}));
+                    appendMessage({ 
+                        id: 'err', 
+                        role: 'assistant', 
+                        content: errData.message || 'Maaf, gagal memulai obrolan.' 
+                    });
+                }
 
                 } else {
+                    // === LOGIKA UNTUK CHAT LANJUTAN (STREAMING SSE) ===
                     const res = await fetch(`${API_URL}/api/v1/chats/${chatId}/messages`, {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Content-Type': 'application/json',
-                            'Accept': 'application/json'
+                            'Accept': 'text/event-stream' // Gunakan Stream
                         },
                         body: JSON.stringify({ query: text })
                     });
-                    const result = await res.json();
+                    
                     typingIndicator.classList.add('hidden');
 
-                    if (res.ok && result.success) {
-                        appendMessage(result.data);
+                    if (res.ok) {
+                        // Buat bubble assistant kosong di awal
+                        const streamMsgId = `stream_${Date.now()}`;
+                        appendMessage({ id: streamMsgId, role: 'assistant', content: '' });
+                        const contentContainer = document.querySelector(`#msg-${streamMsgId} .bg-white`);
+                        
+                        // Mulai membaca stream
+                        const reader = res.body.getReader();
+                        const decoder = new TextDecoder("utf-8");
+                        let fullText = "";
+                        
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            if (done) break;
+                            
+                            const chunk = decoder.decode(value, { stream: true });
+                            const lines = chunk.split('\n');
+                            
+                            for (const line of lines) {
+                                if (line.startsWith('data: ')) {
+                                    const dataStr = line.substring(6).trim();
+                                    
+                                    if (dataStr === '[DONE]') break;
+                                    if (!dataStr) continue;
+                                    
+                                    try {
+                                        const parsed = JSON.parse(dataStr);
+                                        if (parsed.error) {
+                                            fullText += `\n[Error: ${parsed.error}]`;
+                                        } else if (parsed.token) {
+                                            fullText += parsed.token;
+                                        }
+                                        // Update UI secara realtime
+                                        contentContainer.innerHTML = formatText(fullText);
+                                        scrollToBottom();
+                                    } catch (e) {
+                                        console.error("Gagal parsing token", e);
+                                    }
+                                }
+                            }
+                        }
                     } else {
                         appendMessage({ id: 'err', role: 'assistant', content: 'Gagal mengirim pesan.' });
                     }
                 }
             } catch (err) {
+                console.error(err);
                 typingIndicator.classList.add('hidden');
                 appendMessage({ id: 'err', role: 'assistant', content: 'Koneksi terputus.' });
             } finally {
@@ -371,14 +459,14 @@ export const SessionPage = {
                     headers: { 
                         'Authorization': `Bearer ${token}`, 
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'text/event-stream' // Ubah accept ke stream
                     },
                     body: JSON.stringify({ query: promptQuery })
                 });
-                const result = await res.json();
 
                 typingIndicator.classList.add('hidden');
-                if (res.ok && result.success) {
+                
+                if (res.ok) {
                     // 1. Update UI teks pesan user dengan teks hasil editan
                     if (userMsgElement && userMsgElement.querySelector('.user-bubble-content')) {
                         userMsgElement.querySelector('.user-bubble-content').innerHTML = formatText(promptQuery);
@@ -387,8 +475,46 @@ export const SessionPage = {
                     // 2. Hapus bubble pesan assistant lama dari DOM
                     if (assistantMsgElement) assistantMsgElement.remove();
                     
-                    // 3. Render jawaban regenerasi yang baru dari BE
-                    appendMessage(result.data);
+                    // 3. Buat bubble assistant baru yang kosong
+                    const regenMsgId = `regen_${Date.now()}`;
+                    appendMessage({ id: regenMsgId, role: 'assistant', content: '' });
+                    const contentContainer = document.querySelector(`#msg-${regenMsgId} .bg-white`);
+                    
+                    // 4. Mulai membaca stream
+                    const reader = res.body.getReader();
+                    const decoder = new TextDecoder("utf-8");
+                    let fullText = "";
+                    
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n');
+                        
+                        for (const line of lines) {
+                            if (line.startsWith('data: ')) {
+                                const dataStr = line.substring(6).trim();
+                                
+                                if (dataStr === '[DONE]') break;
+                                if (!dataStr) continue;
+                                
+                                try {
+                                    const parsed = JSON.parse(dataStr);
+                                    if (parsed.error) {
+                                        fullText += `\n[Error: ${parsed.error}]`;
+                                    } else if (parsed.token) {
+                                        fullText += parsed.token;
+                                    }
+                                    // Update UI secara realtime
+                                    contentContainer.innerHTML = formatText(fullText);
+                                    scrollToBottom();
+                                } catch (e) {
+                                    console.error("Gagal parsing token regenerasi", e);
+                                }
+                            }
+                        }
+                    }
                 } else {
                     alert('Gagal meregenerasi jawaban.');
                 }

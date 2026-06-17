@@ -1,28 +1,38 @@
 from abc import ABC, abstractmethod
 from typing import List
 from uuid import UUID
+from src.data.repo.chat_generation import MessageContextDTO
 from src.domain.chat.model import (
     ChatResponseDTO, 
     ChatUpdateDTO,
     ChatGetAllDTO
 )
+
 from src.domain.message.model import MessageResponseDTO
 
 class IChat(ABC):
     """Interface untuk manajemen sesi Chat (Akan melakukan hit DB langsung via SQLAlchemy Session)"""
 
+    # @abstractmethod
+    # def create_new_chat_session(self, user_id: UUID, query: str) -> List[MessageResponseDTO]: 
+    #     """
+    #     Alur Proses:
+    #     1. Query masuk -> Hit `title_generation` -> Jadi Chat Title.
+    #     2. Hit `query_retrieval_generator` -> Jadi `hidden_context` untuk pesan user.
+    #     3. Buat 1 Record ChatRoom ke DB.
+    #     4. Buat Record Message 1: role='system', hidden_context=None, content=pre-defined prompt.
+    #     5. Buat Record Message 2: role='user', hidden_context=RAG_result, content=query.
+    #     6. Hit chat_completion berdasarkan record 1 & 2. Hasilnya simpan ke DB sebagai record 3.
+    #     7. Return ke-3 MessageResponseDTO tersebut ke frontend.
+    #     """
+    #     pass
+
     @abstractmethod
-    def create_new_chat_session(self, user_id: UUID, query: str) -> List[MessageResponseDTO]: 
-        """
-        Alur Proses:
-        1. Query masuk -> Hit `title_generation` -> Jadi Chat Title.
-        2. Hit `query_retrieval_generator` -> Jadi `hidden_context` untuk pesan user.
-        3. Buat 1 Record ChatRoom ke DB.
-        4. Buat Record Message 1: role='system', hidden_context=None, content=pre-defined prompt.
-        5. Buat Record Message 2: role='user', hidden_context=RAG_result, content=query.
-        6. Hit chat_completion berdasarkan record 1 & 2. Hasilnya simpan ke DB sebagai record 3.
-        7. Return ke-3 MessageResponseDTO tersebut ke frontend.
-        """
+    def prepare_chat_session(self, user_id: UUID, query: str) -> tuple[str, str, List[MessageContextDTO]]:
+        pass
+
+    @abstractmethod
+    def stream_llm_and_save_assistant(self, user_id: UUID, chat_id: str, history_for_llm: List[MessageContextDTO]):
         pass
 
     @abstractmethod

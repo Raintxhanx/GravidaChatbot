@@ -1,6 +1,7 @@
 import logging
+import json
 from uuid import UUID
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response, stream_with_context
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
@@ -19,38 +20,70 @@ def create_chat_blueprint(chat_service: IChat, secret_key: str, secret_api: str)
     # ──────────────────────────────────────────────────────────────────────
     # POST /chats
     # ──────────────────────────────────────────────────────────────────────
+    # @chat_controller.route('/chats', methods=['POST'])
+    # @token_required
+    # def create_chat():
+    #     """
+    #     Create a new chat session with initial query
+    #     ---
+    #     tags:
+    #       - Chat Session
+    #     security:
+    #       - Bearer: []
+    #     parameters:
+    #       - in: body
+    #         name: body
+    #         required: true
+    #         schema:
+    #           type: object
+    #           required:
+    #             - query
+    #           properties:
+    #             query:
+    #               type: string
+    #               example: "Dokter, saya merasa pusing di bagian belakang kepala sejak kemarin."
+    #     responses:
+    #       201:
+    #         description: Chat session created successfully along with context
+    #       400:
+    #         description: Invalid JSON body
+    #       422:
+    #         description: Validation Error
+    #       500:
+    #         description: Internal Server Error
+    #     """
+    #     data = request.get_json(silent=True)
+    #     if not data:
+    #         return jsonify({'success': False, 'message': 'Body JSON tidak valid'}), 400
+
+    #     query = data.get('query', '').strip()
+    #     if not query:
+    #         return jsonify({'success': False, 'message': 'Parameter query wajib diisi'}), 422
+
+    #     try:
+    #         # Mengambil user_id dari JWT context token dan divalidasi ke UUID
+    #         user_id_str = request.current_user.get('user_id')
+    #         user_id = UUID(user_id_str)
+
+    #         # Memanggil service layer untuk pembuatan chat room baru & orkestrasi RAG LLM
+    #         messages_response = chat_service.create_new_chat_session(user_id=user_id, query=query)
+            
+    #         return jsonify({
+    #             'success': True,
+    #             'message': 'Sesi chat baru berhasil dibuat',
+    #             'data': [msg.model_dump() for msg in messages_response]
+    #         }), 201
+
+    #     except ValueError as val_err:
+    #         return jsonify({'success': False, 'message': f'Format User ID tidak valid: {str(val_err)}'}), 422
+    #     except Exception as e:
+    #         logger.error(f"[CHAT CONTROLLER] Gagal membuat sesi chat baru: {e}", exc_info=True)
+    #         return jsonify({'success': False, 'message': 'Terjadi kesalahan pada server'}), 500
+
     @chat_controller.route('/chats', methods=['POST'])
     @token_required
     def create_chat():
-        """
-        Create a new chat session with initial query
-        ---
-        tags:
-          - Chat Session
-        security:
-          - Bearer: []
-        parameters:
-          - in: body
-            name: body
-            required: true
-            schema:
-              type: object
-              required:
-                - query
-              properties:
-                query:
-                  type: string
-                  example: "Dokter, saya merasa pusing di bagian belakang kepala sejak kemarin."
-        responses:
-          201:
-            description: Chat session created successfully along with context
-          400:
-            description: Invalid JSON body
-          422:
-            description: Validation Error
-          500:
-            description: Internal Server Error
-        """
+        """Create a new chat session with streaming architecture"""
         data = request.get_json(silent=True)
         if not data:
             return jsonify({'success': False, 'message': 'Body JSON tidak valid'}), 400
@@ -60,25 +93,49 @@ def create_chat_blueprint(chat_service: IChat, secret_key: str, secret_api: str)
             return jsonify({'success': False, 'message': 'Parameter query wajib diisi'}), 422
 
         try:
-            # Mengambil user_id dari JWT context token dan divalidasi ke UUID
             user_id_str = request.current_user.get('user_id')
             user_id = UUID(user_id_str)
 
-            # Memanggil service layer untuk pembuatan chat room baru & orkestrasi RAG LLM
-            messages_response = chat_service.create_new_chat_session(user_id=user_id, query=query)
+            # 1. Jalankan Tahap Persiapan (Sinkronus)
+            # Jika lolos guardrail, data chat_id & title langsung terbuat.
+            chat_id, title, history_for_llm = chat_service.prepare_chat_session(user_id=user_id, query=query)
             
-            return jsonify({
-                'success': True,
-                'message': 'Sesi chat baru berhasil dibuat',
-                'data': [msg.model_dump() for msg in messages_response]
-            }), 201
+            # 2. Definisikan Generator untuk Flask HTTP Stream
+            def generate_sse_stream():
+                # Kirim info metadata di awal stream agar Frontend tahu Chat ID & Judul barunya
+                metadata = {
+                    "type": "metadata",
+                    "chat_id": chat_id,
+                    "title": title,
+                    "success": True
+                }
+                yield f"data: {json.dumps(metadata)}\n\n"
+                
+                # Ambil chunk token dari service layer
+                llm_stream = chat_service.stream_llm_and_save_assistant(
+                    user_id=user_id, chat_id=chat_id, history_for_llm=history_for_llm
+                )
+                
+                for token in llm_stream:
+                    chunk_data = {
+                        "type": "token",
+                        "content": token
+                    }
+                    yield f"data: {json.dumps(chunk_data)}\n\n"
+
+            # 3. Kembalikan Response dengan mimetype text/event-stream
+            return Response(
+                stream_with_context(generate_sse_stream()), 
+                mimetype='text/event-stream'
+            )
 
         except ValueError as val_err:
-            return jsonify({'success': False, 'message': f'Format User ID tidak valid: {str(val_err)}'}), 422
+            # Menangkap error Guardrail Abort (422) sebelum stream dimulai
+            return jsonify({'success': False, 'message': str(val_err)}), 422
+            
         except Exception as e:
             logger.error(f"[CHAT CONTROLLER] Gagal membuat sesi chat baru: {e}", exc_info=True)
             return jsonify({'success': False, 'message': 'Terjadi kesalahan pada server'}), 500
-
 
     # ──────────────────────────────────────────────────────────────────────
     # PATCH /chats/<chat_id> (Hanya Mengubah Title)
