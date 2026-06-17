@@ -237,4 +237,4 @@ class ChatGeneration:
         short_title = " ".join(words[:20]) if len(words) >= 20 else query
         
         print(f"🔮 [Ollama Engine] Chat baru tergenerate dengan judul: \"{short_title}\"")
-        short_title
+        return short_title
