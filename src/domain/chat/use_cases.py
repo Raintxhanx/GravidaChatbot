@@ -273,66 +273,63 @@ class ChatUseCase(IChat):
             raise e
 
     def generate_chat_summary(self, chat_id: str, user_id: UUID) -> ChatResponseDTO:
-        logger.info(f"[CHAT SERVICE] Mengonstruksi rangkuman otomatis untuk chat ID: {chat_id}")
+        logger.info(f"[CHAT SERVICE] Mengonstruksi rangkuman untuk chat ID: {chat_id}")
         
+        # 1. Ambil chat
         chat = self._db.query(ChatModel).filter(ChatModel.id == chat_id).first()
         if not chat:
-            logger.warning(f"[CHAT SERVICE] Gagal merangkum: Chat Room {chat_id} tidak ditemukan")
             raise ValueError("Chat session tidak ditemukan")
 
-        chat_user_id = chat.user_id
-
-        if chat_user_id != user_id:
-            logger.warning(f"[SECURITY ALERT] User {chat_user_id} mencoba merangkum chat room {chat_id} milik User {user_id}")
-            raise ValueError({'success': False, 'message': 'Akses ditolak: Anda bukan pemilik room chat ini'})
+        # 2. Check ownership
+        if chat.user_id != user_id:
+            raise ValueError("Akses ditolak: Anda bukan pemilik room chat ini")
 
         try:
-            # 1. Ambil 1 first context (Pesan pertama / System Prompt biasanya)
-            first_context = (
+            # 3. Ambil messages
+            first_msg = (
                 self._db.query(MessageModel)
                 .filter(MessageModel.chat_id == chat_id)
                 .order_by(MessageModel.created_at.asc())
                 .first()
             )
             
-            if not first_context:
-                raise ValueError("Tidak ada pesan di dalam room chat ini untuk dirangkum")
+            if not first_msg:
+                raise ValueError("Chat room belum memiliki pesan untuk dirangkum")
 
-            # Ambil 19 latest context (Kecuali first_context agar tidak ganda jika pesan masih sedikit)
-            latest_contexts = (
+            latest_msgs = (
                 self._db.query(MessageModel)
-                .filter(MessageModel.chat_id == chat_id, MessageModel.id != first_context.id)
+                .filter(MessageModel.chat_id == chat_id, MessageModel.id != first_msg.id)
                 .order_by(MessageModel.created_at.desc())
                 .limit(19)
                 .all()
             )
-            # Balikkan urutan latest context dari desc (DB query) ke asc (urutan kronologis chat)
-            latest_contexts.reverse()
+            latest_msgs.reverse()
 
-            # Gabungkan 1 first context + 19 latest context
-            compiled_messages = [first_context] + latest_contexts
+            compiled = [first_msg] + latest_msgs
             
-            # Format ke List[MessageContextDTO]
+            # 4. Konversi ke DTO
             history_dto = [
-                MessageContextDTO(role=msg.role, content=msg.content) 
-                for msg in compiled_messages
+                MessageContextDTO(role=msg.role, content=msg.content)
+                for msg in compiled
             ]
 
-            # 2. Hit summarize pada ChatGenerationService
-            summary_result = self._chat_gen.summarize(history_dto)
-
-            # 3. Update kolom description pada ChatModel di DB
-            chat.description = summary_result
+            # 5. Hit Ollama
+            summary_text = self._chat_gen.summarize(history_dto)
             
+            if not summary_text or summary_text.strip() == "":
+                raise ValueError("Ollama gagal menghasilkan rangkuman")
+
+            # 6. Update DB
+            chat.description = summary_text
             self._db.commit()
             self._db.refresh(chat)
             
-            logger.info(f"[CHAT SERVICE] Kolom deskripsi chat {chat_id} berhasil di-update dengan rangkuman baru.")
+            logger.info(f"[CHAT SERVICE] ✅ Summary created: {summary_text[:50]}...")
             return ChatResponseDTO.model_validate(chat)
 
         except Exception as e:
             self._db.rollback()
-            logger.error(f"[CHAT SERVICE] Gagal sistem saat menghasilkan rangkuman chat {chat_id}: {e}", exc_info=True)
+            logger.error(f"[CHAT SERVICE] ❌ Error: {e}", exc_info=True)
             raise e
 
     def get_all_chat(self, user_id: UUID, model: ChatGetAllDTO) -> List[ChatResponseDTO]:
