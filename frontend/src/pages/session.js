@@ -147,12 +147,6 @@ export const SessionPage = {
         const appendMessage = (msg, prepend = false) => {
             if (msg.role === 'system') return;
 
-            // Hapus tombol regenerasi dari pesan asisten sebelumnya jika kita menambah pesan baru ke bawah (bukan prepend/load history)
-            if (!prepend && msg.role === 'user') {
-                const lastRegenBtn = messagesContainer.querySelector('.regenerate-btn');
-                if (lastRegenBtn) lastRegenBtn.remove();
-            }
-
             const isUser = msg.role === 'user';
             const bubbleHtml = `
                 <div class="max-w-[85%] md:max-w-[75%] flex flex-col ${isUser ? 'self-end items-end' : 'self-start items-start'} group mb-1" id="msg-${msg.id}">
@@ -161,9 +155,13 @@ export const SessionPage = {
                         ${formatText(msg.content)}
                     </div>
                     
-                    ${!isUser && !prepend ? `
-                        <button class="regenerate-btn hidden group-hover:flex items-center gap-1 mt-1 text-[10px] font-bold text-gray-400 hover:text-[#FE81D4] transition-colors" data-msg-id="${msg.id}">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    ${isUser && !prepend ? `
+                        <button class="edit-user-btn hidden group-hover:flex items-center gap-1 mt-1 text-[10px] font-bold text-gray-400 hover:text-[#FE81D4] transition-colors"
+                            data-msg-id="${msg.id}">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5h2M12 3v2m0 14v2m7-9h2M3 12H1m16.95-6.95l1.414-1.414M5.636 18.364l-1.414 1.414m0-15.556l1.414 1.414m12.728 12.728l1.414 1.414"/>
+                            </svg>
                             Edit & Regenerasi
                         </button>
                     ` : ''}
@@ -173,24 +171,25 @@ export const SessionPage = {
             if (prepend) {
                 messagesContainer.insertAdjacentHTML('afterbegin', bubbleHtml);
             } else {
-                // Jika asisten merespon, pastikan hapus tombol regenerasi yang mungkin menggantung sebelum menaruh yang baru
-                if (msg.role === 'assistant') {
-                    const lastRegenBtn = messagesContainer.querySelector('.regenerate-btn');
-                    if (lastRegenBtn) lastRegenBtn.remove();
-                }
-
                 messagesContainer.insertAdjacentHTML('beforeend', bubbleHtml);
                 scrollToBottom();
             }
         };
 
         // --- EVENT DELEGATION UNTUK TOMBOL REGENERATE ---
-        // (Menggantikan attachRegenerateEvent yang boros resource)
         messagesContainer.addEventListener('click', (e) => {
-            const btn = e.target.closest('.regenerate-btn');
-            if (btn) regenerateMessage(btn.dataset.msgId, btn.closest('.group'));
-        });
+            const btn = e.target.closest('.edit-user-btn');
+            if (!btn) return;
 
+            const userBubble = btn.closest('.group');
+            const assistantBubble = userBubble.nextElementSibling;
+
+            regenerateMessage(
+                btn.dataset.msgId,
+                userBubble,
+                assistantBubble
+            );
+        });
         // --- API HANDLERS ---
 
         // 1. Ambil Detail Sesi Chat
@@ -429,25 +428,28 @@ export const SessionPage = {
         };
 
         // 4. Regenerasi (Edit Pesan Terakhir & Refresh Jawaban)
-        const regenerateMessage = async (oldMsgId, assistantMsgElement) => {
+        const regenerateMessage = async (
+            oldMsgId,
+            userMsgElement,
+            assistantMsgElement
+        ) => {
             if (isProcessing || chatId === 'new') return;
-            
-            // Cari bubble user tepat di atas pesan assistant ini
-            const userMsgElement = assistantMsgElement.previousElementSibling;
+
             let oldUserText = "";
-            
-            if (userMsgElement && userMsgElement.querySelector('.user-bubble-content')) {
-                // Ambil teks asli untuk ditaruh di dalam prompt
-                oldUserText = userMsgElement.querySelector('.user-bubble-content').innerText.trim();
+
+            if (userMsgElement?.querySelector('.user-bubble-content')) {
+                oldUserText = userMsgElement
+                    .querySelector('.user-bubble-content')
+                    .innerText
+                    .trim();
             }
 
             const promptQuery = prompt(
-                "Edit pesan terakhir Anda untuk menghasilkan jawaban baru:", 
+                "Edit pesan:",
                 oldUserText
             );
-            
-            // Batal jika input kosong / di-cancel
-            if (!promptQuery) return; 
+
+            if (!promptQuery) return;
 
             isProcessing = true;
             typingIndicator.classList.remove('hidden');
