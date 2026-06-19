@@ -274,6 +274,16 @@ class ChatGeneration:
             # System prompt dipertahankan persis (tidak diubah)
             system_prompt = """
                 Anda adalah spesialis optimasi kueri pencarian medis untuk sistem Retrieval-Augmented Generation (RAG) yang berfokus pada kesehatan ibu dan kehamilan.
+        
+                TUGAS ANDA:
+                Analisis pesan/permintaan TERAKHIR dari user dalam riwayat percakapan yang diberikan, lalu ubah menjadi satu pertanyaan bahasa Indonesia yang jelas, lengkap, spesifik, dan alami untuk optimasi pencarian semantik (RAG).
+        
+                KETENTUAN KEAMANAN & GUARDRAILS (WAJIB DIPATUHI):
+                1. Anda HANYA boleh memproses permintaan yang berkaitan dengan kesehatan (kehamilan, kesehatan ibu, gejala kehamilan, perawatan prenatal, persalinan, atau perkembangan janin).
+                2. Jika permintaan terakhir valid (sesuai konteks medis/kehamilan), keluarkan HANYA satu pertanyaan medis yang telah dioptimalkan dalam bahasa Indonesia. Jangan tambahkan penjelasan, salam, komentar, tanda kutip, atau teks lainnya.
+                3. JIKA permintaan/percakapan terakhir pengguna TIDAK berkaitan dengan konteks kesehatan atau kehamilan (misalnya teknologi, pemrograman, hiburan, matematika, memasak, percakapan umum, atau topik luar lainnya), Anda WAJIB menjawab dengan TEPAT SATU KATA berikut: abort
+        
+                PENTING: Jangan memberikan alasan atau pengantar apa pun. Jika tidak valid, langsung keluarkan kata "abort" tanpa tanda baca.
             """
 
             # --- PERBAIKAN STRUKTUR MESSAGES ---
@@ -290,14 +300,15 @@ class ChatGeneration:
                     )
 
                 isolated_content = """
-                    Tugas Anda adalah menganalisis permintaan pengguna berdasarkan pertanyaan di atas dan mengubahnya menjadi satu pertanyaan bahasa Indonesia yang jelas, lengkap, spesifik, dan mudah dipahami. Basis data yang digunakan berisi konsultasi medis mendalam dalam format Pertanyaan Pasien dan Jawaban Dokter. Oleh karena itu, kueri harus dirumuskan sebagai pertanyaan alami yang utuh agar menghasilkan akurasi pencarian semantik yang optimal.
-                    Ketentuan keamanan:
-                    1. Anda hanya boleh memproses permintaan yang berkaitan dengan kesehatan, terutama yang berhubungan dengan kehamilan, kesehatan ibu, gejala kehamilan, perawatan prenatal, persalinan, atau perkembangan janin.
-                    2. Untuk permintaan yang valid, keluarkan hanya satu pertanyaan medis yang telah dioptimalkan dalam bahasa Indonesia.
-                    3. Jangan menambahkan penjelasan, salam, komentar, daftar kata kunci, tanda kutip, atau teks lain di luar pertanyaan yang dihasilkan.
+                    TUGAS ANDA:
+                    Analisis pesan/permintaan TERAKHIR dari user dalam riwayat percakapan yang diberikan, lalu ubah menjadi satu pertanyaan bahasa Indonesia yang jelas, lengkap, spesifik, dan alami untuk optimasi pencarian semantik (RAG).
 
-                    PASTIKAN
-                    Jika permintaan pengguna tidak berkaitan dengan konteks kesehatan atau kehamilan (misalnya teknologi, pemrograman, hiburan, matematika, memasak, percakapan umum, atau topik lainnya), Anda wajib menjawab dengan tepat satu kata berikut: "abort"
+                    KETENTUAN KEAMANAN & GUARDRAILS (WAJIB DIPATUHI):
+                    1. Anda HANYA boleh memproses permintaan yang berkaitan dengan kesehatan (kehamilan, kesehatan ibu, gejala kehamilan, perawatan prenatal, persalinan, atau perkembangan janin).
+                    2. Jika permintaan terakhir valid (sesuai konteks medis/kehamilan), keluarkan HANYA satu pertanyaan medis yang telah dioptimalkan dalam bahasa Indonesia. Jangan tambahkan penjelasan, salam, komentar, tanda kutip, atau teks lainnya.
+                    3. JIKA permintaan/percakapan terakhir pengguna TIDAK berkaitan dengan konteks kesehatan atau kehamilan (misalnya teknologi, pemrograman, hiburan, matematika, memasak, percakapan umum, atau topik luar lainnya), Anda WAJIB menjawab dengan TEPAT SATU KATA berikut: abort
+
+                    PENTING: Jangan memberikan alasan atau pengantar apa pun. Jika tidak valid, langsung keluarkan kata "abort" tanpa tanda baca.
                 """
 
             messages.append(
@@ -314,7 +325,7 @@ class ChatGeneration:
                 options={
                     "temperature": 0.0,
                     "top_p": 0.1,
-                    "stop": ["<|im_end|>", "<|im_start|>", "\n"],
+                    "stop": ["<|im_end|>", "<|im_start|>"], 
                 },
                 stream=True
             )
