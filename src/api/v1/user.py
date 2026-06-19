@@ -1,7 +1,7 @@
 import logging
 from uuid import UUID
 from flask import Blueprint, request, jsonify
-from src.util.middlewares.decorator_api import get_token_required_decorator
+from src.util.middlewares.decorator_api import get_token_required_decorator, get_admin_required_decorator
 from src.domain.user.interface import IUser
 
 # Catatan: Sesuaikan path import Interface/Service Anda jika diperlukan
@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 def create_user_blueprint(user_service: IUser, secret_key: str, secret_api: str) -> Blueprint:
     user_controller = Blueprint('user', __name__)
     token_required = get_token_required_decorator(secret_key, secret_api)
+    admin_required = get_admin_required_decorator(secret_key, secret_api)
 
     # ──────────────────────────────────────────────────────────────────────
     # GET /user (Mengambil Data Profil User Berdasarkan JWT)
@@ -80,4 +81,55 @@ def create_user_blueprint(user_service: IUser, secret_key: str, secret_api: str)
                 'message': 'Terjadi kesalahan pada server'
             }), 500
 
+    # ──────────────────────────────────────────────────────────────────────
+    # GET ALL /users (Mengambil Semua Data User - Khusus Admin)
+    # ──────────────────────────────────────────────────────────────────────
+    @user_controller.route('/users', methods=['GET'])
+    @admin_required
+    def get_all_users():  # Mengubah nama fungsi agar lebih relevan
+        """
+        Get all users profile details (Admin Only)
+        ---
+        tags:
+            - User
+        security:
+            - Bearer: []
+        responses:
+            200:
+                description: List data user berhasil diambil
+            401:
+                description: Unauthorized - Token tidak valid
+            403:
+                description: Forbidden - Bukan admin
+            500:
+                description: Terjadi kesalahan pada server
+        """
+        try:
+            # Mengambil seluruh data user (hasilnya berupa list objek Pydantic)
+            users_list = user_service.get_all()
+
+            # Jika database kosong atau return berupa list kosong / None
+            if not users_list:
+                return jsonify({
+                    'success': True, 
+                    'message': 'Data user masih kosong',
+                    'data': []
+                }), 200
+
+            # Gunakan list comprehension karena users_list adalah sebuah LIST
+            serialized_users = [user.model_dump() for user in users_list]
+
+            return jsonify({
+                'success': True,
+                'message': 'Berhasil mengambil semua data user',
+                'data': serialized_users
+            }), 200
+
+        except Exception as e:
+            logger.error(f"[USER CONTROLLER] Gagal mengambil semua data user: {e}", exc_info=True)
+            return jsonify({
+                'success': False, 
+                'message': 'Terjadi kesalahan pada server'
+            }), 500
+        
     return user_controller
