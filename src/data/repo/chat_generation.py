@@ -303,9 +303,9 @@ class ChatGeneration:
                     )
 
             isolated_content = """
-            Tugas Anda adalah membuat satu pertanyaan relevan untuk mencari informasi tambahan berdasarkan percakapan sebelumnya. 
-            Balas HANYA dalam bentuk pertanyaan tanpa penjelasan tambahan. 
-            PENTING: Jika percakapan tidak berkaitan dengan kesehatan atau kehamilan, Anda WAJIB membalas dengan tepat satu kata: abort
+                Tugas Anda adalah membuat satu pertanyaan relevan untuk mencari informasi tambahan berdasarkan percakapan sebelumnya. 
+                Balas HANYA dalam bentuk pertanyaan tanpa penjelasan tambahan. 
+                PENTING: Jika percakapan tidak berkaitan dengan kesehatan atau kehamilan, Anda WAJIB membalas dengan tepat satu kata: abort
             """
 
             messages.append(
