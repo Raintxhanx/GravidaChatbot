@@ -274,19 +274,6 @@ class ChatGeneration:
             # System prompt dipertahankan persis (tidak diubah)
             system_prompt = """
                 Anda adalah spesialis optimasi kueri pencarian medis untuk sistem Retrieval-Augmented Generation (RAG) yang berfokus pada kesehatan ibu dan kehamilan.
-                Tugas Anda adalah menganalisis permintaan pengguna dan mengubahnya menjadi satu pertanyaan bahasa Indonesia yang jelas, lengkap, spesifik, dan mudah dipahami. Basis data yang digunakan berisi konsultasi medis mendalam dalam format Pertanyaan Pasien dan Jawaban Dokter. Oleh karena itu, kueri harus dirumuskan sebagai pertanyaan alami yang utuh agar menghasilkan akurasi pencarian semantik yang optimal.
-                Ketentuan keamanan:
-                1. Anda hanya boleh memproses permintaan yang berkaitan dengan kesehatan, terutama yang berhubungan dengan kehamilan, kesehatan ibu, gejala kehamilan, perawatan prenatal, persalinan, atau perkembangan janin.
-                2. Jika permintaan pengguna tidak berkaitan dengan konteks kesehatan atau kehamilan (misalnya teknologi, pemrograman, hiburan, matematika, memasak, percakapan umum, atau topik lainnya), Anda wajib menjawab dengan tepat satu kata berikut:
-                abort
-                3. Untuk permintaan yang valid, keluarkan hanya satu pertanyaan medis yang telah dioptimalkan dalam bahasa Indonesia.
-                4. Jangan menambahkan penjelasan, salam, komentar, daftar kata kunci, tanda kutip, atau teks lain di luar pertanyaan yang dihasilkan.
-                Contoh keluaran yang benar:
-                Berapa kenaikan berat badan yang ideal pada ibu hamil trimester ketiga?
-                Contoh keluaran yang salah:
-                Pertanyaan yang dioptimalkan:
-                "Berapa kenaikan berat badan yang ideal pada ibu hamil trimester ketiga?"
-                Kata kunci: berat badan, trimester ketiga
             """
 
             # --- PERBAIKAN STRUKTUR MESSAGES ---
@@ -302,14 +289,16 @@ class ChatGeneration:
                         }
                     )
 
-                isolated_content = (
-                    "Tugas Anda adalah membuat satu pertanyaan yang paling relevan dan diperlukan "
-                    "untuk memperoleh informasi tambahan yang dibutuhkan agar dapat menjawab pertanyaan "
-                    "berdasarkan konteks percakapan sebelumnya. "
-                    "Balas hanya dalam bentuk pertanyaan, tanpa penjelasan tambahan, "
-                    "dan tetap perhatikan serta terapkan ketentuan keamanan yang telah ditetapkan sebelumnya."
-                    "Jika percakapan tidak berkaitan dengan kesehatan atau kehamilan, (misalnya teknologi, pemrograman, hiburan, matematika, memasak, percakapan umum, atau topik lainnya) Anda WAJIB membalas dengan tepat satu kata: abort"
-                ) 
+                isolated_content = """
+                    Tugas Anda adalah menganalisis permintaan pengguna berdasarkan pertanyaan di atas dan mengubahnya menjadi satu pertanyaan bahasa Indonesia yang jelas, lengkap, spesifik, dan mudah dipahami. Basis data yang digunakan berisi konsultasi medis mendalam dalam format Pertanyaan Pasien dan Jawaban Dokter. Oleh karena itu, kueri harus dirumuskan sebagai pertanyaan alami yang utuh agar menghasilkan akurasi pencarian semantik yang optimal.
+                    Ketentuan keamanan:
+                    1. Anda hanya boleh memproses permintaan yang berkaitan dengan kesehatan, terutama yang berhubungan dengan kehamilan, kesehatan ibu, gejala kehamilan, perawatan prenatal, persalinan, atau perkembangan janin.
+                    2. Untuk permintaan yang valid, keluarkan hanya satu pertanyaan medis yang telah dioptimalkan dalam bahasa Indonesia.
+                    3. Jangan menambahkan penjelasan, salam, komentar, daftar kata kunci, tanda kutip, atau teks lain di luar pertanyaan yang dihasilkan.
+
+                    PASTIKAN
+                    Jika permintaan pengguna tidak berkaitan dengan konteks kesehatan atau kehamilan (misalnya teknologi, pemrograman, hiburan, matematika, memasak, percakapan umum, atau topik lainnya), Anda wajib menjawab dengan tepat satu kata berikut: "abort"
+                """
 
             messages.append(
                 {
