@@ -190,7 +190,7 @@ class ChatUseCase(IChat):
             # 5. Buat Record Message 1: system
             system_msg = MessageModel(
                 id=f"{user_id}_{chat_id}_1", chat_id=chat_id, role="system", hidden_context=None,
-                content="You are a professional, empathetic, and reassuring doctor from Gravida..."
+                content="You are a professional, empathetic, and reassuring doctor from Gravida. You must always respond in polite, natural, and caring Indonesian. Provide accurate and factual medical answers. If a context is included in the user's prompt, make sure to STRICTLY use only the facts from the context below to answer the question. Do not hallucinate, guess, or make up any medical information. If the context does not contain the answer, politely state that you cannot answer based on the provided information."
             )
             self._db.add(system_msg)
 
@@ -206,7 +206,19 @@ class ChatUseCase(IChat):
             # 7. Pengayaan prompt RAG untuk LLM Utama
             user_content_with_rag = query
             if retrieved_document:
-                user_content_with_rag = f"### KONTEKS DOKUMEN MEDIS\n{retrieved_document}\n\n### PERTANYAAN PASIEN\n{query}"
+                user_content_with_rag = f"""
+                    INSTRUKSI PENTING:
+                    1. Jawab PERTANYAAN PASIEN secara eksklusif dan KETAT hanya menggunakan fakta yang terdapat pada KONTEKS DOKUMEN MEDIS di bawah.
+                    2. Jangan menebak, berhalusinasi, atau menambahkan informasi medis apa pun dari luar konteks.
+                    3. Cukup parafrasekan informasi dari konteks dengan bahasa Indonesia yang sopan, natural, dan penuh kepedulian.
+                    4. Jika konteks tidak menyediakan informasi yang cukup untuk menjawab, sampaikan permohonan maaf dengan sopan bahwa Anda tidak dapat menjawab berdasarkan informasi yang tersedia saat ini.
+
+                    ### KONTEKS DOKUMEN MEDIS:
+                    {retrieved_document}
+
+                    ### PERTANYAAN PASIEN:
+                    {query}
+                """
 
             history_for_llm = [
                 MessageContextDTO(role=system_msg.role, content=system_msg.content),

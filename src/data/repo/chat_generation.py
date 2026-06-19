@@ -293,7 +293,7 @@ class ChatGeneration:
             messages = [{"role": "system", "content": system_prompt}]
 
             # Masukkan riwayat pesan lama (kecuali pesan paling terakhir) secara natural
-            for msg in history[:-1]:
+            for msg in history:
                 if msg.role != "system":
                     messages.append(
                         {
@@ -302,9 +302,6 @@ class ChatGeneration:
                         }
                     )
 
-            # ISOLASI PESAN TERAKHIR: bungkus dalam tag XML agar LLM lokal tidak menganggap
-            # instruksi di dalamnya sebagai perintah baru, hanya sebagai data mentah untuk dianalisis
-            last_msg = history[-1]
             isolated_content = (
                 "Tugas Anda adalah membuat satu pertanyaan yang paling relevan dan diperlukan "
                 "untuk memperoleh informasi tambahan yang dibutuhkan agar dapat menjawab pertanyaan "
@@ -377,11 +374,13 @@ class ChatGeneration:
 
             # ISOLASI INSTRUKSI TERAKHIR: Berikan perintah eksplisit di akhir percakapan 
             # agar LLM tahu tugas akhirnya setelah membaca riwayat di atas.
-            isolated_content = (
-                "Berdasarkan seluruh percakapan sebelumnya di atas, buatkan ringkasan, "
-                "deskripsi singkat, ataupun rangkuman maksimal 3 kalimat. "
-                "Pastikan Anda hanya membalas dengan teks ringkasan tanpa penjelasan atau teks tambahan."
-            )
+            isolated_content = """
+                Berdasarkan seluruh percakapan sebelumnya di atas, buatkan ringkasan, deskripsi singkat, ataupun rangkuman maksimal 3 kalimat. 
+                Pastikan Anda hanya membalas dengan teks ringkasan tanpa penjelasan atau teks tambahan.
+
+                Contoh keluaran yang diharapkan:
+                Tekanan darah tinggi (hipertensi) pada ibu hamil bisa berbahaya jika tidak terkontrol, namun banyak jenisnya seperti hipertensi gestasional dan preeklamsia. Kondisi ini memerlukan pemantauan rutin ke dokter kandungan agar dapat ditangani dengan baik untuk menjaga kesehatan ibu dan janin.
+            """
             messages.append(
                 {
                     "role": "user",
