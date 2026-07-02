@@ -249,10 +249,9 @@ class ChatUseCase(IChat):
             if retrieved_document:
                 user_content_with_rag = f"""
                     INSTRUKSI PENTING:
-                    1. Jawab PERTANYAAN PASIEN secara eksklusif dan KETAT hanya menggunakan fakta yang terdapat pada KONTEKS DOKUMEN MEDIS di bawah.
-                    2. Jangan menebak, berhalusinasi, atau menambahkan informasi medis apa pun dari luar konteks.
+                    1. Jawab PERTANYAAN PASIEN hanya menggunakan fakta yang terdapat pada KONTEKS DOKUMEN MEDIS di bawah.
+                    2. Jangan menambahkan informasi medis apa pun dari luar konteks.
                     3. Cukup parafrasekan informasi dari konteks dengan bahasa Indonesia yang sopan, natural, dan penuh kepedulian.
-                    4. Jika konteks tidak menyediakan informasi yang cukup untuk menjawab, sampaikan permohonan maaf dengan sopan bahwa Anda tidak dapat menjawab berdasarkan informasi yang tersedia saat ini.
 
                     ### KONTEKS DOKUMEN MEDIS:
                     {retrieved_document}

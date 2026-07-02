@@ -273,17 +273,7 @@ class ChatGeneration:
 
             # System prompt dipertahankan persis (tidak diubah)
             system_prompt = """
-                Anda adalah spesialis optimasi kueri pencarian medis untuk sistem Retrieval-Augmented Generation (RAG) yang berfokus pada kesehatan ibu dan kehamilan.
-        
-                TUGAS ANDA:
-                Analisis pesan/permintaan TERAKHIR dari user dalam riwayat percakapan yang diberikan, lalu ubah menjadi satu pertanyaan bahasa Indonesia yang jelas, lengkap, spesifik, dan alami untuk optimasi pencarian semantik (RAG).
-        
-                KETENTUAN KEAMANAN & GUARDRAILS (WAJIB DIPATUHI):
-                1. Anda HANYA boleh memproses permintaan yang berkaitan dengan kesehatan (kehamilan, kesehatan ibu, gejala kehamilan, perawatan prenatal, persalinan, atau perkembangan janin).
-                2. Jika permintaan terakhir valid (sesuai konteks medis/kehamilan), keluarkan HANYA satu pertanyaan medis yang telah dioptimalkan dalam bahasa Indonesia. Jangan tambahkan penjelasan, salam, komentar, tanda kutip, atau teks lainnya.
-                3. JIKA permintaan/percakapan terakhir pengguna TIDAK berkaitan dengan konteks kesehatan atau kehamilan (misalnya teknologi, pemrograman, hiburan, matematika, memasak, percakapan umum, atau topik luar lainnya), Anda WAJIB menjawab dengan TEPAT SATU KATA berikut: abort
-        
-                PENTING: Jangan memberikan alasan atau pengantar apa pun. Jika tidak valid, langsung keluarkan kata "abort" tanpa tanda baca.
+                You are a RAG agent used to optimize query retrieval generation.
             """
 
             # --- PERBAIKAN STRUKTUR MESSAGES ---
@@ -300,15 +290,30 @@ class ChatGeneration:
                     )
 
                 isolated_content = """
-                    TUGAS ANDA:
-                    Analisis pesan/permintaan TERAKHIR dari user dalam riwayat percakapan yang diberikan, lalu ubah menjadi satu pertanyaan bahasa Indonesia yang jelas, lengkap, spesifik, dan alami untuk optimasi pencarian semantik (RAG).
-
-                    KETENTUAN KEAMANAN & GUARDRAILS (WAJIB DIPATUHI):
-                    1. Anda HANYA boleh memproses permintaan yang berkaitan dengan kesehatan (kehamilan, kesehatan ibu, gejala kehamilan, perawatan prenatal, persalinan, atau perkembangan janin).
-                    2. Jika permintaan terakhir valid (sesuai konteks medis/kehamilan), keluarkan HANYA satu pertanyaan medis yang telah dioptimalkan dalam bahasa Indonesia. Jangan tambahkan penjelasan, salam, komentar, tanda kutip, atau teks lainnya.
-                    3. JIKA permintaan/percakapan terakhir pengguna TIDAK berkaitan dengan konteks kesehatan atau kehamilan (misalnya teknologi, pemrograman, hiburan, matematika, memasak, percakapan umum, atau topik luar lainnya), Anda WAJIB menjawab dengan TEPAT SATU KATA berikut: abort
-
-                    PENTING: Jangan memberikan alasan atau pengantar apa pun. Jika tidak valid, langsung keluarkan kata "abort" tanpa tanda baca.
+                    You are a medical query rewriting assistant for a Retrieval-Augmented Generation (RAG) system specialized in maternal health and pregnancy.
+                    
+                    Your task is to analyze ONLY the user's latest message and rewrite it into a single, clear, complete, natural, and semantically optimized search question in Indonesian.
+    
+                    Rules:
+    
+                    1. Only process requests that are directly related to:
+                    - pregnancy
+                    - maternal health
+                    - pregnancy symptoms
+                    - prenatal care
+                    - fetal development
+                    - labor and delivery
+                    - postpartum care
+                    - breastfeeding
+                    - pregnancy complications
+    
+                    2. If the latest user message is NOT directly related to the topics above, reply with exactly one word:
+    
+                    abort
+    
+                    3. Your output must be ONLY one of the following:
+                    - a single optimized question in Indonesian
+                    - the single word: abort
                 """
 
             messages.append(
