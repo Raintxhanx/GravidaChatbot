@@ -20,6 +20,47 @@ class MessageUseCase(IMessage):
         self._chat_gen = chat_gen_service
         self._retrieval_service = retrieval_service
 
+    def _retrieve_hits(self, query: str, source_label: str) -> List[dict]:
+        """Melakukan retrieval ke Qdrant untuk satu query, lalu menandai asal sumbernya (user/model)."""
+        success, hits = self._retrieval_service.retrieve(query=query)
+        if success and isinstance(hits, list):
+            for hit in hits:
+                hit["asal_sumber"] = source_label
+            return hits
+        return []
+
+
+    def _evaluate_best_retrieval(self, query: str, rag_result_query: str) -> tuple[str, str]:
+        """
+        Membandingkan hasil retrieval dari query user vs query hasil model,
+        mengambil skor tertinggi di antara keduanya.
+
+        - Jika skor tertinggi >= 0.85 -> pakai dokumen tsb, dan tentukan instruksi query
+        berdasarkan asal sumber (model/user).
+        - Jika tidak ada yang >= 0.85 -> tandai konteks tidak ditemukan.
+        """
+        hits_model = self._retrieve_hits(rag_result_query, "model")
+        hits_user = self._retrieve_hits(query, "user")
+
+        combined_hits = hits_model + hits_user
+
+        best_score_result = None
+        if combined_hits:
+            best_score_result = max(combined_hits, key=lambda item: item["score"])
+
+        retrieved_document = ""
+        final_query_instruction = query  # default fallback kalau tidak ada hits sama sekali
+
+        if best_score_result and best_score_result["score"] >= 0.85:
+            retrieved_document = best_score_result["payload"].get("full_document_text", "")
+            final_query_instruction = (
+                rag_result_query if best_score_result["asal_sumber"] == "model" else query
+            )
+        else:
+            retrieved_document = "#### KONTEKS TIDAK DITEMUKAN, JANGAN JAWAB PERTANYAAN USER"
+
+        return retrieved_document, final_query_instruction
+
     def handle_user_message(self, chat_id: str, query: str, user_id_query: UUID) -> Generator[str, None, None]:
         logger.info(f"[MESSAGE SERVICE] Memproses pesan stream baru dari user di Chat ID: {chat_id}")
         
@@ -85,22 +126,23 @@ class MessageUseCase(IMessage):
             rag_query_stream = self._chat_gen.query_retrieval_generator(rag_evaluation_payload)
             rag_result_query = "".join([token for token in rag_query_stream]).strip()
             
-            # Fallback aman jika LLM mengembalikan string kosong
+            # Guardrail Abort hanya dicek dari hasil LLM asli (bukan fallback)
+            is_aborted = rag_result_query.lower() == "abort" if rag_result_query else False
+
             if not rag_result_query:
                 logger.info(f"[MESSAGE SERVICE] RAG Generator blank. Fallback ke query user asli: '{query}'")
-                search_query = query
-            else:
-                search_query = rag_result_query
 
-            is_aborted = search_query.lower() == "abort"
-            
-            # Eksekusi Pencarian ke Vector Database (Qdrant)
+            # Eksekusi Pencarian ke Vector Database (Qdrant): user query vs model query
             retrieved_document = None
+            final_query_instruction = rag_result_query
+
             if not is_aborted:
-                logger.info(f"[MESSAGE SERVICE] Final Retrieval query: {search_query}")
-                retrieval_success, hits = self._retrieval_service.retrieve(query=search_query)
-                if retrieval_success and hits:
-                    retrieved_document = hits[0]["payload"].get("full_document_text", "")
+                search_query_for_model = rag_result_query if rag_result_query else query
+                retrieved_document, final_query_instruction = self._evaluate_best_retrieval(
+                    query=query,
+                    rag_result_query=search_query_for_model
+                )
+                logger.info(f"[MESSAGE SERVICE] Final Retrieval instruction: {final_query_instruction}")
 
             # 3. Simpan Pesan User ke DB di awal
             current_msg_count = self._db.query(MessageModel).filter(MessageModel.chat_id == chat_id).count()
@@ -110,7 +152,7 @@ class MessageUseCase(IMessage):
                 id=f"{user_id}_{chat_id}_{user_msg_increment}",
                 chat_id=chat_id,
                 role="user",
-                hidden_context={"rag_query_instruction": rag_result_query, "retrieved_context": retrieved_document},
+                hidden_context={"rag_query_instruction": final_query_instruction, "retrieved_context": retrieved_document},
                 content=query
             )
             self._db.add(user_msg)
@@ -134,7 +176,19 @@ class MessageUseCase(IMessage):
             # 5. Konstruksi Payload Final khusus untuk LLM Utama (Stream)
             user_content_with_rag = query
             if retrieved_document:
-                user_content_with_rag = f"Konteks Dokumen Medis:\n{retrieved_document}\n\nPertanyaan Pasien: {query}"
+                user_content_with_rag = f"""
+                    INSTRUKSI PENTING:
+                    1. Jawab PERTANYAAN PASIEN secara eksklusif dan KETAT hanya menggunakan fakta yang terdapat pada KONTEKS DOKUMEN MEDIS di bawah.
+                    2. Jangan menebak, berhalusinasi, atau menambahkan informasi medis apa pun dari luar konteks.
+                    3. Cukup parafrasekan informasi dari konteks dengan bahasa Indonesia yang sopan, natural, dan penuh kepedulian.
+                    4. Jika konteks tidak menyediakan informasi yang cukup untuk menjawab, sampaikan permohonan maaf dengan sopan bahwa Anda tidak dapat menjawab berdasarkan informasi yang tersedia saat ini.
+
+                    ### KONTEKS DOKUMEN MEDIS:
+                    {retrieved_document}
+
+                    ### PERTANYAAN PASIEN:
+                    {query}
+                """
 
             # Susun final payload dari data yang sudah di-strip bersih
             final_llm_payload = []

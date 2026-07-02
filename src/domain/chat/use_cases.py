@@ -30,6 +30,46 @@ class ChatUseCase(IChat):
         self._chat_gen = chat_gen_service
         self._retrieval_service = retrieval_service
 
+    def _retrieve_hits(self, query: str, source_label: str) -> List[dict]:
+        """Melakukan retrieval ke Qdrant untuk satu query, lalu menandai asal sumbernya (user/model)."""
+        success, hits = self._retrieval_service.retrieve(query=query)
+        if success and isinstance(hits, list):
+            for hit in hits:
+                hit["asal_sumber"] = source_label
+            return hits
+        return []
+
+
+    def _evaluate_best_retrieval(self, query: str, rag_result_query: str) -> tuple[str, str]:
+        """
+        Membandingkan hasil retrieval dari query user vs query hasil model,
+        mengambil skor tertinggi di antara keduanya.
+
+        - Jika skor tertinggi >= 0.85 -> pakai dokumen tsb, dan tentukan instruksi query
+        berdasarkan asal sumber (model/user).
+        - Jika tidak ada yang >= 0.85 -> tandai konteks tidak ditemukan.
+        """
+        hits_model = self._retrieve_hits(rag_result_query, "model")
+        hits_user = self._retrieve_hits(query, "user")
+
+        combined_hits = hits_model + hits_user
+
+        best_score_result = None
+        if combined_hits:
+            best_score_result = max(combined_hits, key=lambda item: item["score"])
+
+        retrieved_document = ""
+        final_query_instruction = query  # default fallback kalau tidak ada hits sama sekali
+
+        if best_score_result and best_score_result["score"] >= 0.85:
+            retrieved_document = best_score_result["payload"].get("full_document_text", "")
+            final_query_instruction = (
+                rag_result_query if best_score_result["asal_sumber"] == "model" else query
+            )
+        else:
+            retrieved_document = "#### KONTEKS TIDAK DITEMUKAN, JANGAN JAWAB PERTANYAAN USER"
+
+        return retrieved_document, final_query_instruction
 
     # def create_new_chat_session(self, user_id: UUID, query: str) -> List[MessageResponseDTO]:
     #     logger.info(f"[CHAT SERVICE] Mencoba membuat sesi chat baru untuk User ID: {user_id}")
@@ -171,15 +211,14 @@ class ChatUseCase(IChat):
             generated_title = self._chat_gen.title_generation(query)
             chat_id = f"chat_{uuid.uuid4().hex.upper()}"
             
-            # 3. Retrieval ke Qdrant
-            retrieval_success, hits = self._retrieval_service.retrieve(query=rag_result_query)
-            retrieved_document = None
-            logger.info(f"[MESSAGE SERVICE] Final Retrieval query: {rag_result_query}")
-            if retrieval_success and hits:
-                retrieved_document = hits[0]["payload"].get("full_document_text", "")
+            # 3. Retrieval ke Qdrant + evaluasi skor tertinggi (user vs model query)
+            retrieved_document, final_query_instruction = self._evaluate_best_retrieval(
+                query=query,
+                rag_result_query=rag_result_query
+            )
 
             hidden_context_payload = {
-                "rag_query_instruction": rag_result_query,
+                "rag_query_instruction": final_query_instruction,
                 "retrieved_context": retrieved_document
             }
 
