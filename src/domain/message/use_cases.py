@@ -142,7 +142,7 @@ class MessageUseCase(IMessage):
                     query=query,
                     rag_result_query=search_query_for_model
                 )
-                logger.info(f"[MESSAGE SERVICE] Final Retrieval instruction: {final_query_instruction}")
+                logger.info(f"[RAG SERVICE] Final Retrieval instruction: {final_query_instruction}")
 
             # 3. Simpan Pesan User ke DB di awal
             current_msg_count = self._db.query(MessageModel).filter(MessageModel.chat_id == chat_id).count()

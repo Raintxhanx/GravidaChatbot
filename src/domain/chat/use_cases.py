@@ -210,6 +210,8 @@ class ChatUseCase(IChat):
             # 2. Judul & ID
             generated_title = self._chat_gen.title_generation(query)
             chat_id = f"chat_{uuid.uuid4().hex.upper()}"
+
+            logger.info(f"[RAG SERVICE] Generated retrieval query: {rag_result_query}")
             
             # 3. Retrieval ke Qdrant + evaluasi skor tertinggi (user vs model query)
             retrieved_document, final_query_instruction = self._evaluate_best_retrieval(

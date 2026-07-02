@@ -6,7 +6,7 @@ from peft import PeftModel
 # Jalur folder di Drive E
 base_model_id = "Qwen/Qwen2.5-7B-Instruct" 
 lora_path = r"E:\ModelConfig\qwen_alodokter_lora"
-output_dir = r"E:\ModelConfig\qwen_alodokter_merged"
+output_dir = r"E:\ModelConfig\qwen_alodokter_merged_v2"
 cache_dir = r"E:\ModelConfig\hf_cache"
 
 print("1. Memuat Base Model dari Cache Lokal (Drive E)...")
