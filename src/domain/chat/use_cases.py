@@ -61,7 +61,7 @@ class ChatUseCase(IChat):
         retrieved_document = ""
         final_query_instruction = query  # default fallback kalau tidak ada hits sama sekali
 
-        if best_score_result and best_score_result["score"] >= 0.85:
+        if best_score_result and best_score_result["score"] >= 0.10:
             retrieved_document = best_score_result["payload"].get("full_document_text", "")
             final_query_instruction = (
                 rag_result_query if best_score_result["asal_sumber"] == "model" else query
