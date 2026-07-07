@@ -150,7 +150,7 @@ export const SessionPage = {
             const isUser = msg.role === 'user';
             const bubbleHtml = `
                 <div class="max-w-[85%] md:max-w-[75%] flex flex-col ${isUser ? 'self-end items-end' : 'self-start items-start'} group mb-1" id="msg-${msg.id}">
-                    <div class="px-4 py-3 rounded-2xl text-[14px] leading-relaxed shadow-sm 
+                    <div class="px-4 py-3 rounded-2xl text-[14px] leading-relaxed shadow-sm text-justify
                         ${isUser ? 'bg-[#FE81D4] text-white rounded-tr-sm user-bubble-content' : 'bg-white border border-gray-100 text-gray-700 rounded-tl-sm'}">
                         ${formatText(msg.content)}
                     </div>
@@ -662,7 +662,7 @@ export const SessionPage = {
                         const bubbleHtml = `
                             <div class="max-w-[85%] md:max-w-[75%] flex flex-col ${isUser ? 'self-end items-end' : 'self-start items-start'} mb-1">
                                 <div class="px-4 py-3 rounded-2xl text-[14px] leading-relaxed shadow-sm ring-2 ring-[#FE81D4] ring-offset-2
-                                    ${isUser ? 'bg-[#FE81D4] text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-700 rounded-tl-sm'}">
+                                    ${isUser ? 'bg-[#FE81D4] text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-700 rounded-tl-sm text-justify  '}">
                                     ${formatText(msg.content)}
                                 </div>
                             </div>
