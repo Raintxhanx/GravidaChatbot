@@ -1,0 +1,345 @@
+[peneliti]: Oh oke. Saya buka pertanyaannya.
+[narasumber]: Boleh boleh, nggak apa-apa.
+[peneliti]: Oke. Sebelumnya kenalin dulu ya.. perkenalkan saya Raihan Ahmad Fathoni, di sini saya sedang melakukan penelitian, utamanya membuat sebuah sistem untuk membantu ibu-ibu hamil.
+[narasumber]: Iya.
+[peneliti]: Jadi sistemnya itu akan menjawab pertanyaan-pertanyaan yang diajukan oleh para Ibu Hamil. Sebelumnya apakah ibu bersedia untuk menjadi narasumber?
+[narasumber]: Bersedia.
+[peneliti]: Oke. Nantinya hasil dari wawancara ini akan saya terjemahkan menjadi bahasa Indonesia dalam bentuk tulisan yang akan saya jadikan untuk bahan pelatihan model kecerdasan buatan saya. Nah nanti data setnya ini bukan hanya berasal dari sini aja, saya sudah mengumpulkan data set lainnya yang nantinya akan digabung. Oke. Sebagian besar apakah sudah bisa dimulai?
+[narasumber]: Bisa, silakan.
+[peneliti]: Oke baik. pertama-tama... Ibu hamil itu sebetulnya rentan sekali ya terhadap risiko-risiko kehamilan ya. Nah... pertama saya ingin membahas gejala yang membuat ibu hamil dalam kondisi berbahaya. Gejala yang seperti apa yang mengharuskan ibu hamil ke rumah sakit jika mengalami gejala tersebut.
+[narasumber]: Iya. pertama-tama ibu hamil itu kan... ada usia kehamilannya ya.
+[peneliti]: Iya.
+[narasumber]: Di sini pertanyaannya gejala apa yang mengharuskan ibu hamil segera ke IGD. Jika ibu hamilnya... ibu hamil itu terdiri dari tiga trimester ya.
+[peneliti]: Iya.
+[narasumber]: Trimester 1 ada 0 minggu sampai 13 minggu.
+[peneliti]: Oke.
+[narasumber]: Trimester 2 ada 14 minggu sampai 27 minggu, trimester 3 28 minggu sampai 40 minggu.
+[peneliti]: Oke.
+[narasumber]: Jika ibu hamil tersebut pada trimester 0 atau pada usia kehamilan 0 minggu sampai 13 minggu itu mengalami perdarahan, biasanya pada hamil muda, itu harus segera langsung ke IGD.
+[peneliti]: Oke.
+[narasumber]: Terus perut keram yang tidak kunjung mereda, itu juga harus langsung ke IGD.
+[peneliti]: Oke.
+[narasumber]: Pokoknya pada hamil muda itu di bawah 13 minggu perdarahan sih biasanya.
+[peneliti]: Oke.
+[narasumber]: kalau trimester 2 dari 14 minggu ke 28 minggu biasanya yang harus ke IGD itu ketika gerakan janin berkurang... Karena kan di atas 16 minggu sudah merasakan gerakan-gerakan janin tuh.
+[peneliti]: Iya.
+[narasumber]: trimester 2 gerakan janin berkurang, terus perdarahan juga sama, kalau ada perdarahan... terus keluar air-air atau ketuban pecah dini.
+[peneliti]: Itu ketuban pecah di trimester 2?
+[narasumber]: Trimester 2 dan trimester 3.
+[peneliti]: Oh oke.
+[narasumber]: trimester 2 dan trimester 3, sama ini... nyeri kepala hebat.
+[peneliti]: Nyeri kepala hebat.
+[narasumber]: Nyeri kepala hebat... apalagi ya... perdarahan, pergerakan janin berkurang, keluar air-air, ketuban pecah dini, sakit kepala hebat, sama demam.
+[peneliti]: Demam.
+[narasumber]: Demam. Demam yang tidak kunjung turun demamnya. Jadi langsung ke IGD. Biasanya demam setelah 3 hari ya.. 3 hari demam langsung ke IGD.
+[peneliti]: Oke. Kalau gejala yang masih bisa dirawat di rumah gitu
+[narasumber]: Gejala yang masih bisa dirawat di rumah... mungkin misalkan demam ibu hamil, kita minum biasanya kan obat yang aman nih Sanmol.
+[peneliti]: Iya.
+[narasumber]: Paracetamol...
+[peneliti]: Oke. Obat yang dijual di apotek umum gitu ya
+[narasumber]: Yang masih bisa dikonsumsi ibu hamil, yang masih aman, diminum demamnya mereda, itu masih bisa observasi di rumah.
+[peneliti]: Oke.
+[narasumber]: Terus misalkan kayaknya keram perut nih atau nyeri perut bagian bawah tapi habis melakukan aktivitas berat.
+[peneliti]: Oh.
+[narasumber]: Terus dibawa rebahan atau tirah baring sebentar aja udah enak, itu masih observasi di rumah, masih aman. Pokoknya selama nggak ada perdarahan, nggak ada ketuban pecah dini, nggak ada pusing, pandangan mata kabur, itu masih aman di rumah.
+[peneliti]: Oke.
+[narasumber]: Gitu. Jadi si pasiennya juga jangan terlalu overthinking ya.. jadi sehingga kadang cemas itu membuat si pasien itu jadi berlebihan padahal nih nggak kenapa-kenapa gitu.
+[peneliti]: Iya betul.
+[narasumber]: Pokoknya selagi nggak ada perdarahan, nggak ada ketuban pecah dini, sama nggak ada nyeri kepala hebat, masih aman di rumah.
+
+<-- clear -->
+
+[peneliti]: Oke baik. Tadi disinggung soal pendarahan tuh. Kalau pendarahan tuh apakah ada yang masih boleh di rumah, atau apakah semua pendarahan itu udah harus ke rumah sakit ?.
+[narasumber]: Sebenarnya kalau perdarahan pada hamil muda eh itu suatu ancaman.
+[peneliti]: Oke.
+[narasumber]: Pada kehamilan muda ya kan. Dilihat dulu nih nge-flek nih misalkan ya, nge-flek kecoklatan kemerahan.. masih keluar sedikit, oke kita observasi. Observasi biasanya di rumah kadang sih pasien langsung buru-buru ke IGD nih karena udah khawatirkan sama kehamilannya. Tapi sebenarnya kita pantau di rumah 1 jam atau 2 jam lah paling lama gitu ya.. kalau itu perdarahannya makin banyak, bisa langsung ke IGD. Karena kalau pada hamil muda takutnya terancam janinnya keguguran. Tapi kalau pada hamil trimester 2 dan trimester 3, sama balik lagi.. takut juga terancam bayinya, atau bisa jadi kalau pada kehamilan cukup bulan biasanya ini mas.. plasenta itu kan bisa menutup jalan lahir.
+[peneliti]: Oh iya.
+[narasumber]: Bisa di samping, yang bagus itu kan di atas.
+[peneliti]: Oke.
+[narasumber]: Jadi kalau misalkan pada cukup bulan terjadi perdarahan, itu biasanya kalau masuk rumah sakit kita nggak boleh langsung periksa dalam.
+[peneliti]: Hmm.
+[narasumber]: Karena takutnya ada plasenta nih.. Jadi biasanya kalau pada hamil cukup bulan yang ditakutkan itu. Plasenta. Tapi kalau pada hamil muda yang ditakutkan keguguran. Jadi mengancam si bayi.
+[peneliti]: Oke. Periksa dalam itu seperti apa? Periksa dalam itu USG atau apa?
+[narasumber]: Periksa dalam pakai tangan.
+[peneliti]: Oh, diperiksa langsung.
+[narasumber]: Untuk melihat untuk mengukur pembukaan. Biasanya kalau misalkan dalam persalinan normal kan biasanya kalau di bidan.. "Bu, diperiksa dalam dulu ya buat tau pembukaan". Kalau pembukaan kan 1 sampai 10.
+[peneliti]: Iya, 1 sampai 10.
+[narasumber]: Ya, gitu.
+[peneliti]: Ini boleh di-stop dulu ya?
+[narasumber]: Boleh.
+
+<-- clear -->
+
+Narasumber: 3 hari demam baru bisa dirawat di rumah sakit.
+Peneliti: Oh oke. Itu kalau biasanya ya.
+Narasumber: Tapi kemarin aku ada pasien, dia baru demam dari jam 9 malam, dia datang ke IGD jam 4 pagi. Tapi dia belum minum obat penurun demam di rumah. Akhirnya kalau di rumah sakit kan langsung loading kan, loading infusan udah biasanya kalau demam udah kena cairan tuh udah langsung mulai membaik badannya.
+Peneliti: Oke. Oke. Tadi kan dijelasin tuh ya untuk penurunan gerakan janin.
+Peneliti: Itu mungkin ada kayak kondisi yang bisa dijelasin ya penurunan seperti apa, kan di trimester 2 kan utamanya ya?
+Peneliti: Nah itu penurunan janin yang seperti apa yang bahaya gitu?
+Narasumber: yang bahaya terus langsung tindakan cepat ya. Biasanya air ketubannya tuh udah mulai berkurang. Itu atau disebut Oligohidramnion ya. Oligohidramnion itu air ketubannya sudah mulai berkurang sehingga si janin ini udah nggak leluasa nih. Janin itu kan kalau di dalam perut ada air ketuban, dia jadi seperti berenang.
+Peneliti: Iya, iya.
+Narasumber: Nah, kalau air ketubannya mulai berkurang, dia nanti udah mulai nih berkurang gerakannya. Jadi biasanya saluran oksigen dari si ibu ke si bayinya berkurang juga, jadi gerakannya itu berkurang. Nah, terus biasanya bisa dipantau, eh biasanya sih kalau kita kasih penkes (Pendidikan Kesehatan) ke pasien ya, "Ibu dipantau ya gerakan janin, minimal banget sehari itu 10 kali."
+Narasumber: Biasanya. Atau dalam 1 jam minimal banget deh 4 kali dalam 1 jam. Tapi kan kadang pasien lupa nih, heeh, jadi kita kasih trik-trik nih. Misalkan makan siapin kacang 10 piece, nanti kalau janinnya, janinnya gerak makan satu gitu.
+Peneliti: Biar inget ya.
+Narasumber: Bener. Sebenarnya kalau penurunan gerakan janin pasti semua ibu hamil menurut saya peka. Karena kan dia dalam satu tubuh, bersama tubuh dia ya.
+Peneliti: Paham, paham.
+Narasumber: Jadi, biasanya dia udah mulai ngerasa "kok kayaknya gerakan janin aku udah mulai berkurang ya," pasti ntar dia langsung ke IGD. Pokoknya minimal banget 1 hari itu 10 kali gerakan atau 1 jam itu 4 kali tendangan.
+Peneliti: Tendangan ya.
+Narasumber: Yang minimal banget. Tapi 10 kali itu minimal ya, bisa lebih dari itu.
+Peneliti: Oke. Dan itu masih, itu berarti kalau kurang dari itu baru tanda bahaya gitu ya?
+Narasumber: Iya, bener. Kenapa nih bayinya nih? Biasanya kalau ke IGD, silent baby, kan direkam jantung.
+Peneliti: silent baby.
+Narasumber: Nadinya udah mulai bradi (bradikardia) ya, udah mulai di bawah normal, itu biasanya udah harus ibunya pakai oksigen, biasanya sih lebih ke kekurangan oksigen si bayi, karena dia kan kurang bergerak.
+Peneliti: Iya iya. Setau saya ada istilah preeklamsia ya kalau buat ibu janin, mungkin boleh dijelasin itu detailnya apa tuh? Preeklamsia?
+Narasumber: Kalau preeklamsia itu kan suatu kondisi pada ibu hamil yang tekanan darahnya tinggi ya.
+Narasumber: Tekanan darah tinggi itu bisa terjadi pada si ibunya belum hamil. Jadi ibu hamil ini udah menderita hipertensi, ketika hamil dia tetep hipertensi. Tapi ada juga yang ketika belum hamil dia nggak hipertensi, tapi pada saat hamil dia hipertensi. Nah ini nanya preeklamsi. Preeklamsi ini banyak yang harus diperiksa nih, pertama tekanan darah.
+Narasumber: Tekanan darah biasanya yang atasnya itu Sistolik di atas 140. Yang bawahnya, diastol maksimal banget di 90.
+
+<-- clear -->
+
+Narasumber: Lebih dari itu sudah Eklamsi. Kalau pre itu kan sebelum. Berarti sebelum 90/140, kalau udah di atas itu eklamsi namanya.
+Narasumber: Gitu, jadi sekarang itu cukup banyak pasien yang kayak gitu.
+Peneliti: Karena gaya hidup ya?
+Narasumber: Mungkin pertama iya gaya hidup. Kedua, kadang pasien ini nggak peka.
+Narasumber: Nggak peka sama dirinya nih. Gejala-gejala itu, gejala-gejala eklamsi atau preeklamsi ini bisa timbul di usia di bawah 20 minggu.
+Peneliti: Oke oke.
+Narasumber: Biasanya berawal dari kaki bengkak.
+Narasumber: Kaki bengkak. Kadang pasien itu peka karena "oh kayaknya saya hamil nih, kayaknya wajar deh kalau kaki bengkak." Padahal itu kenapa nih? Harusnya dicari tahu nih kan? Kenapa ya kaki bengkak? Mungkin bagian wajah, memang ada beberapa ibu hamil yang memang bagian wajahnya beda, tapi memang harusnya kita sebagai ibu hamil peka juga ya.
+Narasumber: Periksa gitu kan. Terus Pusing biasanya. Sakit kepala. Terus kalau yang udah kronis banget, dia sampai pandangan mata kabur, sampai kadang syok, sampai nggak ketolong gitu.
+Peneliti: Dan itu dikatakan terlambat tuh setelah?
+Narasumber: Dikatakan terlambat, ibu hamil yang preeklamsi menjadi eklamsia berat, itu dikatakan terlambat ketika dia sudah tensi tinggi tapi tidak terkontrol.
+Peneliti: Oh oke.
+Narasumber: Pada manusia yang tidak hamil aja, ketika sudah didiagnosis hipertensi, itu sudah harus minum obat darah tinggi setiap hari, nggak ada alasan untuk stop, apalagi ibu hamil, gitu kan. Dikatakan terlambat ketika dia memang sudah didiagnosa eklamsi tapi nggak minum obat. Nah itu bisa mengancam ke bayi, bisa mengancam ke ibu. Ke bayinya bisa kematian, ke ibunya bisa syok sehingga nggak sadarkan diri.
+Narasumber: Karena ketika udah tau eklamsi pasti kalau di rumah sakit akan masuk obat-obatan nih, MgSO4 (Magnesium Sulfat) gitu ya, untuk penatalaksanaan darah tingginya itu, biar nggak terjadi syok.
+Peneliti: Oke. Saya lanjut ya. Kalau misal ibu hamil itu kadang ada kondisi kayak mual-mual gitu ya, atau mungkin sampai muntah, Apakah ada atau tidak kondisi yang pas muntah itu nggak normal gitu? Kayak misalnya kapan masih boleh di rumah atau kapan yang sudah nggak normal dan harus ke rumah sakit?
+Narasumber: Iya, harus ke rumah sakit. tadi yang saya bilang, biasanya di trimester 2, itu pasien udah mulai enakan.
+Peneliti: trimester 2 itu di antara 14 minggu sampai 27 minggu ya.
+Narasumber: Iya. Nah, muntah mual itu disebut hiperemesis gravidarum.
+Narasumber: Ya kan, hiperemesis gravidarum itu memang terjadi pada ibu hamil, sebenarnya normal, karena itu sudah ilmiahnya seorang ibu hamil. Cuman dikatakan dia harus ke rumah sakit takutnya kekurangan cairan ya.
+Narasumber: Takutnya dehidrasi berat gitu. Biasanya muntah terus menerus dan makan pun nggak bisa. Jadi harus diganti cairan. Eh lima kali, lima kali muntah?
+Peneliti: Sehari apa?
+Narasumber: Wah, bisa lebih.
+Peneliti: Oh bisa lebih.
+Narasumber: Kalau kita minta data ke pasien, dari pagi sampai datang ini aja kadang dia udah bisa lima kali lebih. Jadi dia langsung ke IGD.
+Peneliti: Berarti yang nggak normal itu yang lebih dari berapa biasanya?
+Narasumber: Yang nggak normal lebih dari 5 kali Udah harus ke IGD ya.
+Narasumber: Minimal ke faskes 1, puskesmas gitu ya. Klinik. Obat mual muntah nggak mempan juga, baru...
+
+<-- clear -->
+
+Peneliti: Oke. Tadi juga sempet disinggung ya, gejala trimester yang bahaya itu demam misalnya. Nah, demam yang berapa derajat sih yang dikatakan bahaya gitu?
+Narasumber: Sebenarnya sama dengan orang yang nggak hamil.
+Narasumber: 37,5. Normalnya kan 36,5 sampai 37,5.
+Narasumber: Di atas 37,5 selama 3 hari berturut-turut, kalau masih demam aja langsung ke IGD aja.
+Narasumber: Untuk penatalaksanaan pertama mungkin per 4 jam atau per 8 jam.
+Narasumber: Kalau memang demam terus per 4 jam minum obat penurun panas oke. Kalau nggak per 8 jam juga boleh.
+Narasumber: Sehari tiga kali.
+Peneliti: Oke. Itu perawatan di rumah berarti?
+Narasumber: Iya, untuk perawatan di rumah. Tapi kalau udah demam sampai 3 hari tidak turun, bisa langsung ke IGD. Tapi kita observasi juga ya kandungan kita, gerakannya janinnya oke, terus nggak ada tanda bahaya lain, masih aman di rumah.
+Peneliti: Kalau sesak napas? setahu saya sih sesak napas itu kalau ada gejala langsung ke rumah sakit, nggak ada tunda-tunda ya?
+Narasumber: kita lihat dulu nih, sesak napasnya karena apa?
+Narasumber: Biasanya kalau terjadi pada hamil yang cukup bulan, si janin kan udah mulai membesar, sehingga dia menekan bagian sini (dada) kan.
+Peneliti: Trimester tiga berarti ya.
+Narasumber: Iya. Itu biasanya memang ibu hamil cenderung lebih engap, lebih susah napas.
+Peneliti: Berarti itu normal?
+Narasumber: Iya. Tapi kalau kita membicarakan pasien itu riwayat asma, beda lagi ya. kalau sesak lebih baik langsung ke IGD.
+Narasumber: Kalau pada hamil muda, sesak napas seperti apa yang berbahaya? Sebenarnya, sesak napas sewajarnya orang nggak hamil juga sih mas.
+Narasumber: Kalau misalkan memang dia udah lemes, terus sampai ke pusing, sampai ke dadanya nyesek, oke langsung ke IGD aja. Kalau misalkan sesak napas masih tirah baring, miring kiri, masih enak, masih aman, habis tirah baring nggak papa di rumah. Tapi kalau udah sampai sakit dada, langsung IGD.
+Peneliti: Oke. Lanjut. Ketuban pecah.
+
+<-- clear -->
+
+Peneliti: Tadi kan, kapan ketuban pecah?
+Narasumber: Iya. Kapan harus segera ke rumah sakit.
+Peneliti: Oke. Yang pasti trimester 3 ya?
+Narasumber: Iya, di trimester 2 tuh jarang. Biasanya trimester 3, dari usia 28 minggu ke atas ya.
+Narasumber: Itu dari rembes-rembes pun udah harus ke rumah sakit.
+Peneliti: Ya. Jadi gejala sekecil apapun itu udah red flag gitu ya?
+Narasumber: Biasanya sih pasien, oke ke bidan dulu nih.
+Peneliti: Oh oke.
+Narasumber: Kadang misalkan masih mau normal nih, ke bidan kan. Dari bidan dicek pembukaan, oh belum ada pembukaan nih. Biasanya sih langsung disarankan ke rumah sakit sih, karena kalau udah ketuban pecah banyak kemungkinannya.
+Narasumber: Takutnya, sebenarnya sih pertama ketuban pecah observasi dulu nih. 4 sampai 6 jam ke depan.
+Narasumber: Kalau pembukaan nambah, oke dilanjut diobservasi. Tapi kalau pembukaan nggak nambah, terus kita cek TTV-nya (Tanda-Tanda Vital), TTV ibu, denyut jantung bayi, kita cek rekam jantung bayi semuanya bagus, masih lanjut observasi. Tapi kalau misalkan kita rekam jantung, denyut jantung bayinya kurang bagus, terus ketubannya udah nggak jernih. Ketuban itu kan ada warna-warnanya ya.
+Narasumber: Jernih, keruh, hijau. Kalau hijau kan sudah bercampur mekonium (feses pertama yang dikeluarkan oleh bayi baru lahir). Kalau misalkan kita tungguin observasi lama-lama hijau, biasanya bayinya sudah buang air besar di dalam perut, jadi sehingga ketubannya hijau. Nah kalau udah hijau , udah harus segera dilahirkan si bayinya itu. Jadi biasanya yang dari observasi lahiran normal jadi langsung cito untuk sesar (operasi sesar cito, prosedur persalinan caesar darurat yang harus dilakukan segera karena kondisi mendesak dan tidak bisa ditunda).
+Peneliti: Jadi yang saya baca-baca nih ya, kalau kontraksi itu ada yang palsu dan ada yang kontraksi persalinan ya. Apa ciri-ciri mana kontraksi palsu dan mana kontraksi persalinan
+Narasumber: Kontraksi palsu atau disebut dengan Braxton Hicks (Braxton Hicks, istilah medis dari kontraksi palsu) Braxton Hicks itu biasanya terjadi pada kehamilan muda atau memang belum bulannya nih. Dia itu terjadi di rentan waktu yang singkat dan tidak terus-menerus. Jadi, kalau terus-menerus kan di menit selanjutnya, di 10 menit atau di 1 jam pertama, dia mulas terus. Itu kalau kontraksi asli.
+Narasumber: Kalau kontraksi palsu, ya hilang aja, sesuka-sukanya dia datang.
+Peneliti: Oh gitu.
+Narasumber: Terus datangnya itu tidak seperti kontraksi mau lahiran. Jadi kayak cuma kenceng, tapi kenceng tapi lemah. Kalau misalkan perutnya itu kontraksi asli itu kayak papan, bener-bener kayak papan kalau dipegang keras. Kalau kontraksi palsu dia tuh masih lembek-lembek tapi kenceng.
+Peneliti: Oke oke. Paham paham.
+
+<-- clear -->
+
+Narasumber: Kalau kontraksi persalinan itu dia datang, di 1 sampai 3 kali dalam 10 menit.
+Narasumber: Dari 30 detik sampai kuat 40 detik, 45 detik. Itu setiap 10 menit. Nanti di menit ke-20, di 10 menit kedua, dia akan datang lagi seperti itu.
+Narasumber: Nah, sampai menjelang persalinan, dia rutin nih dari 1 kali, 2 kali, 3 kali, sampai ke 4 kali dalam 10 menit. Dengan waktu yang lebih lama. 30 detik, 40 detik, 45 detik. Itu kalau kontraksi asli atau kontraksi persalinan.
+Peneliti: Oke. Apakah bisa dilanjut ?
+Narasumber: Lanjut, lanjut, lanjut.
+Peneliti: Kondisi apa yang membuat pasien itu nggak boleh nunggu-nunggu untuk kontrol berikutnya?
+Narasumber: Kondisi seperti tadi ya.
+Peneliti: Yang tadi ya?
+Narasumber: Iya, ketuban pecah, perdarahan, terus sakit kepala, pandangan mata kabur, demam Lebih dari 3 hari. (suhu) 37.5 , ya...
+Peneliti: Oke. Kek... keknya udah sih untuk pertanyaan gejala ya. Kita lanjut ke pertanyaan keputusan kritis. Jadi, ibu hamil itu kan nggak semuanya aware (sadar) terhadap dirinya. Iya, terus juga nggak semua edukasinya sama .Nah, apa sih kesalahan yang paling sering dilakukan ibu hamil sehingga membuat dia menunda berobat gitu?
+Narasumber: Heeh. Tadi yang di pre-eklampsi (dan eklamsi)
+Narasumber: Kadang pasien itu nggak peka dengan tanda-tanda yang ada di dalam tubuh dia.
+Narasumber: Gitu. Jadi dia kayak, "kayaknya ini bawaan hamil deh".
+Narasumber: Tapi kan kalau itu, "kayaknya ini bawaan hamil", kata orang dulu ini mah bawaan hamil gitu ya. "Normal ini mah gitu". Jadi kadang si pasien ini udahlah nanti aja nunggu kontrol gitu. Jadi dia nggak berobat. Banyak sih itu. Atau apa ya kalau di rumah sakit ya. Preeklamsi. Itu banyak, lumayan banyak kecolongan. Datang-datang, tensi udah tinggi, pas tindakan dia udah tinggi. Terus setelah ditanyakan, selama hamil nggak pernah tahu nih tensi tinggi. "Pernah minum obat darah tinggi nggak bu selama hamil?" Nggak pernah minum obat darah tinggi. Gitu sih.
+Peneliti: Jadi kurang check up daerah sistol diastol ya.
+Narasumber: (Membaca pertanyaan) Apakah kesalahan paling sering
+Peneliti: Kita lanjut ini, gejala yang diremehin oleh ibu hamil, seperti tadi ya, "ini mah normal gitu". Itu gejala apa sih biasanya yang ibu hamil merasa normal padahal sebenarnya itu bahaya gitu?
+Narasumber: Gejala apa yang sering diremehkan pasien tetapi sebenarnya berbahaya. Iya. Gejala, mungkin ya kalau dari yang paling standar ya, sakit kepala. Sakit kepala. Sakit kepala kadang kan ada pasien yang memang dia tingkat nyerinya atau tingkat sakitnya kan tinggi.
+Narasumber: Jadi dia kuat nih sama si sakit kepala itu.
+Narasumber: Ya kan, jadi dia cuek-cuek. Padahal harusnya "kenapa ya sakit kepala mulu".
+Peneliti: Iya, iya.
+Narasumber: Gitu kan, apa memang tensinya tinggi, atau ada penyakit lain gitu. Terus, Sebenarnya kalau gejala-gejala itu, lebih ke kaki bengkak.
+Narasumber: seperti yang sebelumnya, tensi tinggi, terus sakit kepala.
+Peneliti: Oke, sepertinya saya rasa juga pertanyaan 3 udah tadi ya. Indikator utama harus diperiksa langsung?
+Narasumber: Udah tadi ya, pokoknya kalau pasien ibu hamil itu ketika yang dirasa dia tidak dalam batas normal, kalau kita sebagai bidan ya, tidak bisa ditangani di klinik, kita langsung saranin untuk ke rumah sakit.
+Peneliti: Oke. (Membaca list pertanyaan) 1 sampai 18 dicek-cek lagi. Saya rasa sih udah semua ya. Tadi kan, gejala yang seperti apa yang harus dianggap darurat? Tadi udah. Yang flag juga kan. Red flag. Nyeri perut udah. Kapan sakit kepala? Iya, sudah tadi.
+Narasumber: Sakit kepala yang disertai dengan pandangan mata kabur, terus nyeri ulu hati.
+Peneliti: Iya. Tadi, tanda preeklamsia juga, yang paling sering terlambat tadi, yang nggak kontrol
+Narasumber: Kurang peka terhadap gejala-gejala ya. Kayak misalkan urinenya sedikit, apa namanya bagian kakinya bengkak. Sakit kepala.
+Peneliti: Iya, saya rasa udah ya. Red flag juga tadi kan tinggal dirangkum aja ya, yang 1 2 3...
+Narasumber: Trimester 1, trimester 2, trimester 3 sebenarnya sama.
+Narasumber: Perdarahan, ketuban pecah, sakit kepala yang disertai dengan pandangan mata kabur, terus kaki bengkak tadi, kaki bengkak, benar.
+Peneliti: Oke, yak, saya rasa udah sih. Oke. Yah, nanti kalau kurang bisa dihubungin kembali ya.
+Narasumber: Bisa hubungin saya. Oke.
+Peneliti: Mungkin ada yang mau ditambahan mungkin? Atau yang disampain?
+Narasumber: Apa ya? Sebenarnya kalau ibu hamil ini, selama aku di rumah sakit ya, memang kasus tertinggi itu eklamsi. Itu pertama karena pasien memang kurang peka dengan kondisi tekanan darahnya dia gitu.
+Peneliti: Jarang medical check up gitu ya?
+Narasumber: Mungkin, mungkin dia sesuai nih medical check up, tapi kadang dia cuek. seperti "oh ini masih normal" gitu ya, 80/90, 130/140... Itu kan udah preeklamsi. Nanti tahu-tahu udah di trimester kedua, cek urine, tahu-tahu protein urine-nya positif. Kalau udah positif kan udah eklamsi tuh. Harus pematangan paru, harus segera tindakan dilahirkan bayinya. Karena kalau masih dipertahankan, takutnya bayinya keracunan di dalam kandungan ya.
+Peneliti: Oke deh. Yak, makasih banyak ya Ibu Puput ya.
+Narasumber: Heeh. Semoga membantu.
+Peneliti: Amin, sangat membantu ini. Wah banyak banget wawasan baru yang buat saya juga gitu, bukan cuma buat penelitian, tapi buat saya pribadi gitu. Makasih banget ya, mungkin sekian aja wawancara saya. Tadi sekali lagi bersedia ya untuk hasil wawancaranya berupa terjemahan bahasa Indonesia saya jadikan untuk pelatihan model ya, bersedia ya?
+Peneliti: Oke. Terima kasih banyak, saya pamit undur diri ya. Oke.
+
+<-- konteks based question -->
+Pertanyaan 1 : Gejala apa yang mengharuskan ibu hamil segera ke IGD?
+[narasumber] : Jika ibu hamil tersebut pada trimester 0 atau pada usia kehamilan 0 minggu sampai 13 minggu itu mengalami perdarahan, biasanya pada hamil muda, itu harus segera langsung ke IGD.
+[narasumber] : Terus perut keram yang tidak kunjung mereda, itu juga harus langsung ke IGD.
+[narasumber] : Pokoknya pada hamil muda itu di bawah 13 minggu perdarahan sih biasanya.
+[narasumber] : kalau trimester 2 dari 14 minggu ke 28 minggu biasanya yang harus ke IGD itu ketika gerakan janin berkurang... Karena kan di atas 16 minggu sudah merasakan gerakan-gerakan janin tuh.
+[narasumber] : trimester 2 gerakan janin berkurang, terus perdarahan juga sama, kalau ada perdarahan... terus keluar air-air atau ketuban pecah dini.
+[narasumber] : trimester 2 dan trimester 3, sama ini... nyeri kepala hebat.
+[narasumber] : Demam. Demam yang tidak kunjung turun demamnya. Jadi langsung ke IGD. Biasanya demam setelah 3 hari ya.. 3 hari demam langsung ke IGD.
+[narasumber] : Kalau misalkan memang dia udah lemes, terus sampai ke pusing, sampai ke dadanya nyesek, oke langsung ke IGD aja.
+[narasumber] : Tapi kalau udah sampai sakit dada, langsung IGD.
+[narasumber] : Yang nggak normal lebih dari 5 kali Udah harus ke IGD ya.
+
+Pertanyaan 2 : Gejala apa yang masih bisa dipantau di rumah?
+[narasumber] : Gejala yang masih bisa dirawat di rumah... mungkin misalkan demam ibu hamil, kita minum biasanya kan obat yang aman nih Sanmol.
+[narasumber] : Yang masih bisa dikonsumsi ibu hamil, yang masih aman, diminum demamnya mereda, itu masih bisa observasi di rumah.
+[narasumber] : Terus misalkan kayaknya keram perut nih atau nyeri perut bagian bawah tapi habis melakukan aktivitas berat.
+[narasumber] : Terus dibawa rebahan atau tirah baring sebentar aja udah enak, itu masih observasi di rumah, masih aman. Pokoknya selama nggak ada perdarahan, nggak ada ketuban pecah dini, nggak ada pusing, pandangan mata kabur, itu masih aman di rumah.
+[narasumber] : Pokoknya selagi nggak ada perdarahan, nggak ada ketuban pecah dini, sama nggak ada nyeri kepala hebat, masih aman di rumah.
+[narasumber] : Kalau misalkan sesak napas masih tirah baring, miring kiri, masih enak, masih aman, habis tirah baring nggak papa di rumah.
+
+Pertanyaan 3 : Kapan flek darah dianggap normal dan kapan berbahaya?
+[narasumber] : Sebenarnya kalau perdarahan pada hamil muda eh itu suatu ancaman.
+[narasumber] : Pada kehamilan muda ya kan. Dilihat dulu nih nge-flek nih misalkan ya, nge-flek kecoklatan kemerahan.. masih keluar sedikit, oke kita observasi.
+[narasumber] : Tapi sebenarnya kita pantau di rumah 1 jam atau 2 jam lah paling lama gitu ya.. kalau itu perdarahannya makin banyak, bisa langsung ke IGD. Karena kalau pada hamil muda takutnya terancam janinnya keguguran.
+[narasumber] : Tapi kalau pada hamil trimester 2 dan trimester 3, sama balik lagi.. takut juga terancam bayinya, atau bisa jadi kalau pada kehamilan cukup bulan biasanya ini mas.. plasenta itu kan bisa menutup jalan lahir.
+[narasumber] : Jadi kalau misalkan pada cukup bulan terjadi perdarahan, itu biasanya kalau masuk rumah sakit kita nggak boleh langsung periksa dalam.
+[narasumber] : Karena takutnya ada plasenta nih.. Jadi biasanya kalau pada hamil cukup bulan yang ditakutkan itu. Plasenta. Tapi kalau pada hamil muda yang ditakutkan keguguran. Jadi mengancam si bayi.
+
+Pertanyaan 4 : Perdarahan seperti apa yang harus dianggap darurat?
+[narasumber] : Jika ibu hamil tersebut pada trimester 0 atau pada usia kehamilan 0 minggu sampai 13 minggu itu mengalami perdarahan, biasanya pada hamil muda, itu harus segera langsung ke IGD.
+[narasumber] : Tapi sebenarnya kita pantau di rumah 1 jam atau 2 jam lah paling lama gitu ya.. kalau itu perdarahannya makin banyak, bisa langsung ke IGD. Karena kalau pada hamil muda takutnya terancam janinnya keguguran.
+[narasumber] : Tapi kalau pada hamil trimester 2 dan trimester 3, sama balik lagi.. takut juga terancam bayinya, atau bisa jadi kalau pada kehamilan cukup bulan biasanya ini mas.. plasenta itu kan bisa menutup jalan lahir.
+[narasumber] : Jadi kalau misalkan pada cukup bulan terjadi perdarahan, itu biasanya kalau masuk rumah sakit kita nggak boleh langsung periksa dalam. Karena takutnya ada plasenta nih.
+
+Pertanyaan 5 : Nyeri perut seperti apa yang mengindikasikan kondisi serius?
+[narasumber] : Terus perut keram yang tidak kunjung mereda, itu juga harus langsung ke IGD.
+
+Pertanyaan 6 : Kapan sakit kepala pada ibu hamil berbahaya?
+[narasumber] : Pusing biasanya. Sakit kepala. Terus kalau yang udah kronis banget, dia sampai pandangan mata kabur, sampai kadang syok, sampai nggak ketolong gitu.
+[narasumber] : Sakit kepala yang disertai dengan pandangan mata kabur, terus nyeri ulu hati.
+[narasumber] : Sakit kepala kadang kan ada pasien yang memang dia tingkat nyerinya atau tingkat sakitnya kan tinggi... Jadi dia cuek-cuek. Padahal harusnya "kenapa ya sakit kepala mulu".
+
+Pertanyaan 7 : Tanda preeklamsia yang paling sering terlambat disadari pasien?
+[narasumber] : Biasanya berawal dari kaki bengkak.
+[narasumber] : Kaki bengkak. Kadang pasien itu peka karena "oh kayaknya saya hamil nih, kayaknya wajar deh kalau kaki bengkak." Padahal itu kenapa nih? Harusnya dicari tahu nih kan?
+[narasumber] : Dikatakan terlambat, ibu hamil yang preeklamsi menjadi eklamsia berat, itu dikatakan terlambat ketika dia sudah tensi tinggi tapi tidak terkontrol.
+[narasumber] : Kurang peka terhadap gejala-gejala ya. Kayak misalkan urinenya sedikit, apa namanya bagian kakinya bengkak. Sakit kepala.
+[narasumber] : Nanti tahu-tahu udah di trimester kedua, cek urine, tahu-tahu protein urine-nya positif.
+
+Pertanyaan 8 : Penurunan gerakan janin seperti apa yang perlu tindakan cepat?
+[narasumber] : yang bahaya terus langsung tindakan cepat ya. Biasanya air ketubannya tuh udah mulai berkurang. Itu atau disebut Oligohidramnion ya.
+[narasumber] : Nah, kalau air ketubannya mulai berkurang, dia nanti udah mulai nih berkurang gerakannya. Jadi biasanya saluran oksigen dari si ibu ke si bayinya berkurang juga, jadi gerakannya itu berkurang.
+[narasumber] : Pokoknya minimal banget 1 hari itu 10 kali gerakan atau 1 jam itu 4 kali tendangan.
+[narasumber] : Nadinya udah mulai bradi (bradikardia) ya, udah mulai di bawah normal, itu biasanya udah harus ibunya pakai oksigen, biasanya sih lebih ke kekurangan oksigen si bayi, karena dia kan kurang bergerak.
+
+Pertanyaan 9 : Kapan muntah saat hamil sudah tidak normal?
+[narasumber] : Cuman dikatakan dia harus ke rumah sakit takutnya kekurangan cairan ya.
+[narasumber] : Takutnya dehidrasi berat gitu. Biasanya muntah terus menerus dan makan pun nggak bisa. Jadi harus diganti cairan.
+[narasumber] : Yang nggak normal lebih dari 5 kali Udah harus ke IGD ya.
+[narasumber] : Obat mual muntah nggak mempan juga, baru...
+
+Pertanyaan 10 : Demam berapa derajat pada ibu hamil yang harus diperiksa?
+[narasumber] : 37,5. Normalnya kan 36,5 sampai 37,5.
+[narasumber] : Di atas 37,5 selama 3 hari berturut-turut, kalau masih demam aja langsung ke IGD aja.
+[narasumber] : Demam. Demam yang tidak kunjung turun demamnya. Jadi langsung ke IGD. Biasanya demam setelah 3 hari ya.. 3 hari demam langsung ke IGD.
+
+Pertanyaan 11 : Sesak napas seperti apa yang berbahaya?
+[narasumber] : Tapi kalau kita membicarakan pasien itu riwayat asma, beda lagi ya. kalau sesak lebih baik langsung ke IGD.
+[narasumber] : Kalau misalkan memang dia udah lemes, terus sampai ke pusing, sampai ke dadanya nyesek, oke langsung ke IGD aja.
+[narasumber] : Tapi kalau udah sampai sakit dada, langsung IGD.
+
+Pertanyaan 12 : Kapan ketuban pecah harus segera ke rumah sakit?
+[narasumber] : Biasanya trimester 3, dari usia 28 minggu ke atas ya.
+[narasumber] : Itu dari rembes-rembes pun udah harus ke rumah sakit.
+[narasumber] : Biasanya sih langsung disarankan ke rumah sakit sih, karena kalau udah ketuban pecah banyak kemungkinannya.
+
+Pertanyaan 13 : Bagaimana membedakan kontraksi palsu dan kontraksi persalinan?
+[narasumber] : Kontraksi palsu atau disebut dengan Braxton Hicks... Dia itu terjadi di rentan waktu yang singkat dan tidak terus-menerus.
+[narasumber] : Kalau kontraksi palsu, ya hilang aja, sesuka-sukanya dia datang.
+[narasumber] : Jadi kayak cuma kenceng, tapi kenceng tapi lemah. Kalau misalkan perutnya itu kontraksi asli itu kayak papan, bener-bener kayak papan kalau dipegang keras. Kalau kontraksi palsu dia tuh masih lembek-lembek tapi kenceng.
+[narasumber] : Kalau kontraksi persalinan itu dia datang, di 1 sampai 3 kali dalam 10 menit. Dari 30 detik sampai kuat 40 detik, 45 detik. Itu setiap 10 menit. Nanti di menit ke-20, di 10 menit kedua, dia akan datang lagi seperti itu.
+[narasumber] : Nah, sampai menjelang persalinan, dia rutin nih dari 1 kali, 2 kali, 3 kali, sampai ke 4 kali dalam 10 menit. Dengan waktu yang lebih lama. 30 detik, 40 detik, 45 detik. Itu kalau kontraksi asli atau kontraksi persalinan.
+
+Pertanyaan 14 : Dalam kondisi apa pasien tidak boleh menunggu kontrol berikutnya?
+[narasumber] : Kondisi seperti tadi ya.
+[narasumber] : Iya, ketuban pecah, perdarahan, terus sakit kepala, pandangan mata kabur, demam Lebih dari 3 hari. (suhu) 37.5 , ya...
+[narasumber] : Jika ibu hamil tersebut pada trimester 0 atau pada usia kehamilan 0 minggu sampai 13 minggu itu mengalami perdarahan, biasanya pada hamil muda, itu harus segera langsung ke IGD.
+[narasumber] : trimester 2 gerakan janin berkurang, terus perdarahan juga sama, kalau ada perdarahan... terus keluar air-air atau ketuban pecah dini.
+[narasumber] : trimester 2 dan trimester 3, sama ini... nyeri kepala hebat.
+[narasumber] : Sakit kepala yang disertai dengan pandangan mata kabur, terus nyeri ulu hati.
+[narasumber] : Demam. Demam yang tidak kunjung turun demamnya. Jadi langsung ke IGD. Biasanya demam setelah 3 hari ya.. 3 hari demam langsung ke IGD.
+
+Pertanyaan 15 : Red flag trimester 1, 2, dan 3 apa saja?
+[narasumber] : Trimester 1, trimester 2, trimester 3 sebenarnya sama.
+[narasumber] : Perdarahan, ketuban pecah, sakit kepala yang disertai dengan pandangan mata kabur, terus kaki bengkak tadi, kaki bengkak, benar.
+[narasumber] : Biasanya berawal dari kaki bengkak.
+[narasumber] : Kaki bengkak. Kadang pasien itu peka karena "oh kayaknya saya hamil nih, kayaknya wajar deh kalau kaki bengkak." Padahal itu kenapa nih? Harusnya dicari tahu nih kan?
+[narasumber] : Jika ibu hamil tersebut pada trimester 0 atau pada usia kehamilan 0 minggu sampai 13 minggu itu mengalami perdarahan, biasanya pada hamil muda, itu harus segera langsung ke IGD.
+[narasumber] : trimester 2 gerakan janin berkurang, terus perdarahan juga sama, kalau ada perdarahan... terus keluar air-air atau ketuban pecah dini.
+
+Pertanyaan 16 : Apa kesalahan paling sering ibu hamil lakukan saat menunda berobat?
+[narasumber] : Kadang pasien itu nggak peka dengan tanda-tanda yang ada di dalam tubuh dia.
+[narasumber] : Jadi dia kayak, "kayaknya ini bawaan hamil deh".
+[narasumber] : Jadi kadang si pasien ini udahlah nanti aja nunggu kontrol gitu. Jadi dia nggak berobat. Banyak sih itu.
+[narasumber] : Datang-datang, tensi udah tinggi, pas tindakan dia udah tinggi. Terus setelah ditanyakan, selama hamil nggak pernah tahu nih tensi tinggi. "Pernah minum obat darah tinggi nggak bu selama hamil?" Nggak pernah minum obat darah tinggi. Gitu sih.
+[narasumber] : Dikatakan terlambat, ibu hamil yang preeklamsi menjadi eklamsia berat, itu dikatakan terlambat ketika dia sudah tensi tinggi tapi tidak terkontrol.
+[narasumber] : Kurang peka terhadap gejala-gejala ya. Kayak misalkan urinenya sedikit, apa namanya bagian kakinya bengkak. Sakit kepala.
+[narasumber] : Nanti tahu-tahu udah di trimester kedua, cek urine, tahu-tahu protein urine-nya positif.
+
+Pertanyaan 17 : Gejala apa yang sering diremehkan pasien tetapi sebenarnya berbahaya?
+[narasumber] : Gejala, mungkin ya kalau dari yang paling standar ya, sakit kepala. Sakit kepala.
+[narasumber] : Sakit kepala kadang kan ada pasien yang memang dia tingkat nyerinya atau tingkat sakitnya kan tinggi.
+[narasumber] : Jadi dia kuat nih sama si sakit kepala itu.
+[narasumber] : Jadi dia cuek-cuek. Padahal harusnya "kenapa ya sakit kepala mulu".
+[narasumber] : Terus, Sebenarnya kalau gejala-gejala itu, lebih ke kaki bengkak.
+[narasumber] : seperti yang sebelumnya, tensi tinggi, terus sakit kepala.
+[narasumber] : Sakit kepala yang disertai dengan pandangan mata kabur, terus nyeri ulu hati.
+[narasumber] : Biasanya berawal dari kaki bengkak.
+[narasumber] : Kaki bengkak. Kadang pasien itu peka karena "oh kayaknya saya hamil nih, kayaknya wajar deh kalau kaki bengkak." Padahal itu kenapa nih? Harusnya dicari tahu nih kan?
+
+Pertanyaan 18 : Apa indikator utama “harus diperiksa langsung”?
+[narasumber] : Udah tadi ya, pokoknya kalau pasien ibu hamil itu ketika yang dirasa dia tidak dalam batas normal, kalau kita sebagai bidan ya, tidak bisa ditangani di klinik, kita langsung saranin untuk ke rumah sakit.
+[narasumber] : Jika ibu hamil tersebut pada trimester 0 atau pada usia kehamilan 0 minggu sampai 13 minggu itu mengalami perdarahan, biasanya pada hamil muda, itu harus segera langsung ke IGD.
+[narasumber] : Terus perut keram yang tidak kunjung mereda, itu juga harus langsung ke IGD.
+[narasumber] : trimester 2 gerakan janin berkurang, terus perdarahan juga sama, kalau ada perdarahan... terus keluar air-air atau ketuban pecah dini.
+[narasumber] : trimester 2 dan trimester 3, sama ini... nyeri kepala hebat.
+[narasumber] : Demam. Demam yang tidak kunjung turun demamnya. Jadi langsung ke IGD. Biasanya demam setelah 3 hari ya.. 3 hari demam langsung ke IGD.
+[narasumber] : Kalau misalkan memang dia udah lemes, terus sampai ke pusing, sampai ke dadanya nyesek, oke langsung ke IGD aja.
+[narasumber] : Yang nggak normal lebih dari 5 kali Udah harus ke IGD ya.
