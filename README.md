@@ -24,8 +24,6 @@ Masalah utama yang diangkat adalah rendahnya akses informasi kesehatan maternal 
 - Perbandingan eksperimental atas **tiga konfigurasi arsitektur**: LLM *fine-tuned* tanpa RAG, LLM *fine-tuned* + RAG, dan LLM *base* + RAG.
 - Konteks bahasa Indonesia dengan *guardrail* medis (filter topik di luar kehamilan → respon "abort").
 
-> ⚠️ **Catatan Akurasi Implementasi:** Berdasarkan hasil pemindaian kode (`main.py` dan `src/`), *backend* dikembangkan dengan **Flask 3.1 + Flasgger** (bukan FastAPI seperti pada rancangan awal), dengan inferensi LLM dilayani melalui **Ollama** (model dapat dikonfigurasi, bawaan `qwen2.5:0.5b`) yang diakses melewati *Cloudflare Access Tunnel*. Model `Qwen2.5-7B-Instruct` yang di-fine-tune (LoRA) dihasilkan pada notebook `TrainingQwenModel_v2.ipynb` dan di-deploy sebagai model Ollama (`qwen_gravida:latest` / `qwen-alodokter:latest` — lihat `test/`).
-
 ---
 
 ## 🎯 Tujuan Penelitian
