@@ -136,7 +136,6 @@ Pendekatan penelitian terdiri dari tiga tahap utama: pengumpulan & augmentasi da
 ├── Dockerfile                  # Multi-stage: build frontend (node) + backend (python:3.11-slim)
 ├── docker-compose.yaml         # Service "app" (port 8021:5000) + volume model_data
 ├── .env.example                # Template environment variable
-├── todo.txt                    # Catatan fitur/issue yang masih dikembangkan
 ├── src/
 │   ├── api/v1/                 # Blueprint Flask: auth, user, chat, message, document, collection
 │   ├── data/
@@ -152,22 +151,10 @@ Pendekatan penelitian terdiri dari tiga tahap utama: pengumpulan & augmentasi da
 │   ├── scrape.py               # Scraper isi (pertanyaan + jawaban dokter) per URL
 │   ├── *.csv                   # Hasil scraping & dataset (lihat bawah)
 │   └── TranscriptWawancaraCleaned.txt  # Transkrip wawancara tenaga kesehatan (primer)
-├── test/                       # test.py, test2.py, test3.py — uji endpoint & inferensi Ollama
-├── docs/
-│   ├── DiagramKerangkaKerjaArsitekturModel.png   # Kerangka kerja arsitektur model
-│   ├── GrafLossFunctionFineTuningModel.png       # Grafik training loss fine-tuning
-│   ├── HalamanDashboard.png                      # Screenshot halaman dashboard
-│   ├── HalamanLandingPage.png                    # Screenshot halaman landing page
-│   ├── HalamanLogin.png                          # Screenshot halaman login
-│   ├── HalamanPendaftaran.png                    # Screenshot halaman pendaftaran
-│   ├── HalamanRiwayatPercakapan.png              # Screenshot halaman riwayat percakapan
-│   ├── HalamanSesiPercakapan.png                 # Screenshot halaman sesi percakapan
-│   ├── MetodePenelitian.png                      # Alur metode penelitian
-│   └── VisualisasiPerbandinganArsitekturLLM.png  # Visualisasi perbandingan 3 arsitektur
 ├── inference_model_result/     # CSV hasil evaluasi 3 konfigurasi + PerbandinganModel.png
 ├── model_data/                 # Cache model BGE-M3 (offline)
-├── merge_model/                # [abaikan] hasil merge model
-└── frontend/                   # Aplikasi web (React) — bukan fokus dokumentasi
+├── merge_model/                # hasil merge model
+└── frontend/                   # Aplikasi web
 ```
 
 ---
@@ -192,8 +179,6 @@ Urutan eksekusi notebook yang benar (untuk replikasi):
 **3. Inferensi & Evaluasi** (output di `inference_model_result/`)
 - Menjalankan 3 konfigurasi terhadap ~50 data uji, membandingkan jawaban model vs "Jawaban Dokter" (ground truth).
 - Hasil per konfigurasi: `hasil_evaluasi_llm_50_data.csv`, `hasil_evaluasi_llm_base.csv`, `hasil_evaluasi_llm_dan_rag_50_data.csv`.
-
-> Catatan: notebook training & evaluasi dieksekusi di luar repositori lokal (Colab); file CSV di `inference_model_result/` adalah artefak hasil evaluasinya.
 
 ---
 
@@ -294,12 +279,13 @@ docker compose up --build
 Sistem dievaluasi dengan membandingkan jawaban model terhadap *ground truth* ("Jawaban Dokter") untuk **~50 data uji** menggunakan metrik BLEU, ROUGE-1/2/L, dan BERTScore F1. Tiga konfigurasi dibandingkan:
 
 | Konfigurasi | BLEU | ROUGE-1 | ROUGE-2 | ROUGE-L | BERTScore F1 |
-|---|---|---|---|---|---|
-| LLM Base + RAG | — | — | — | — | — |
-| LLM Fine-tuned (LoRA) tanpa RAG | — | — | — | — | — |
-| **LLM Fine-tuned + RAG** | — | — | — | — | — |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| LLM Base + RAG | 0.2288 | 0.5237 | 0.2850 | 0.3705 | 0.7573 |
+| LLM Fine-tuned (LoRA) tanpa RAG | 0.1264 | 0.4522 | 0.1422 | 0.2384 | 0.7460 |
+| **LLM Fine-tuned + RAG** | **0.3279** | **0.6175** | **0.3651** | **0.4437** | **0.8122** |
 
-> Angka metrik pasti tersimpan dalam visualisasi `inference_model_result/PerbandinganModel.png` dan notebook evaluasi. File CSV di `inference_model_result/` berisi pasangan *Pertanyaan · Jawaban Dokter · Jawaban Prediksi Model* per konfigurasi yang dapat direkapitulasi menjadi tabel di atas.
+## Kesimpulan
+Berdasarkan data di atas, konfigurasi **LLM Fine-tuned + RAG** memberikan performa paling optimal dan unggul mutlak di seluruh metrik evaluasi. Kombinasi antara penyesuaian gaya/format lewat *Fine-Tuning* serta penyediaan basis pengetahuan eksternal lewat *RAG* menghasilkan jawaban dengan tingkat akurasi leksikal dan semantik tertinggi.
 
 **Parameter training (konfigurasi terbaik Fine-tuned + RAG):**
 
@@ -416,7 +402,6 @@ Base URL: `/api/v1`. Semua endpoint (kecuali `/health`, `/`, `/documents/health`
 | Domain | Kesehatan maternal — pendampingan ibu hamil & pencegahan stunting |
 | Bahasa | Indonesia |
 | Platform Training | Google Colab (NVIDIA Tesla T4) |
-| Institusi / Peneliti | `[Tidak ditemukan dalam kode — isi sesuai lembar judul skripsi]` |
 | Tahun | 2026 |
 
 ---
