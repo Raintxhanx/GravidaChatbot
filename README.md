@@ -1,6 +1,6 @@
 # GravidaChatbot 🤱
 
-> Chatbot RAG + Fine-tuning berbasis LLM untuk pendampingan dan edukasi kesehatan maternal (ibu hamil) berbahasa Indonesia, guna pencegahan stunting.
+> PENGEMBANGAN CHATBOT VIRTUAL PENDAMPING KEHAMILAN MENGGUNAKAN RETRIEVAL-AUGMENTED GENERATION DAN FINE-TUNING PADA MODEL QWEN2.5-7B-INSTRUCT
 
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![Framework](https://img.shields.io/badge/Backend-Flask%203.1-red.svg)](https://flask.palletsprojects.com/)
