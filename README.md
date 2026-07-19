@@ -370,10 +370,8 @@ Base URL: `/api/v1`. Semua endpoint (kecuali `/health`, `/`, `/documents/health`
 - **Kapasitas kontekstual riwayat**: Ringkasan percakapan hanya mengambil **20 pesan** (1 pesan user pertama + 19 pesan terbaru); bukan seluruh histori tanpa batas.
 - **Training steps terbatas**: Fine-tuning hanya **150 steps** dengan dataset relatif kecil (~314 baris hasil augmentasi) — bukan pelatihan penuh; karenanya kemampuan generalisasi terbatas.
 - **Dataset terbatas & domain spesifik**: 18 data primer + 300 data sekunder (Alodokter); topik di luar kehamilan sengaja diblokir (*guardrail* "abort").
-- **Model produksi vs riset**: Backend menggunakan Ollama (bawaan `qwen2.5:0.5b`); model `Qwen2.5-7B` hasil fine-tune dievaluasi di luar deployment harian.
+- **Model produksi vs riset**: Backend menggunakan Ollama model `Qwen2.5-7B` hasil fine-tune dievaluasi di luar deployment harian.
 - **Hallucination risk**: Meski ada RAG + instruksi "hanya jawab dari konteks", sistem tetap memerlukan verifikasi tenaga medis profesional — **bukan pengganti konsultasi dokter**.
-- **Dependensi eksternal**: Membutuhkan instance Qdrant, PostgreSQL, dan Ollama yang terpisah (tidak dibundel dalam satu container).
-- **Fitur belum selesai** (lihat `todo.txt`): penanganan pesan tanpa query RAG (regenerate + new message), dan logika "abort" saat asisten tidak membutuhkan RAG (mis. "halo!").
 
 ---
 
